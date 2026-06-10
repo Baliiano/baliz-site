@@ -342,6 +342,10 @@
     *{animation-duration:.001ms!important;transition-duration:.06ms!important}
     .frame{transform:none!important}
     .rv,.rv-s{opacity:1!important;transform:none!important}
+    /* exceção: o sweep da headline roda SEMPRE — o kill-switch global acima
+       zerava a duração e a barra "teleportava" pro fim (o modo reduzir
+       movimento vem ligado em PC gamer, inclusive pelo tweak do painel) */
+    .sweep.go .swbg,.sweep.go .swtop{animation-duration:.9s!important}
   }
 </style>
 </head>
