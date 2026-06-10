@@ -119,11 +119,13 @@
   .sweep .swbg{position:absolute;top:4%;bottom:2%;left:-8px;right:-8px;border-radius:5px;background:#7c3aed;transform:scaleX(0);transform-origin:left center;z-index:0}
   .sweep .swtx{position:relative;z-index:1}
   .sweep .swtop{position:absolute;left:0;top:0;z-index:1;color:#fff;clip-path:inset(-8% 100% -8% 0);pointer-events:none}
+  /* SEM exceção de prefers-reduced-motion aqui: o tweak de Efeitos Visuais do
+     próprio painel (e PC de gamer em geral) liga o "reduzir movimento" no
+     Windows — a exceção fazia a varredura nunca rodar pro público-alvo. */
   .sweep.go .swbg{animation:swBg .9s cubic-bezier(.65,0,.35,1) forwards}
   .sweep.go .swtop{animation:swTx .9s cubic-bezier(.65,0,.35,1) forwards}
   @keyframes swBg{to{transform:scaleX(1)}}
   @keyframes swTx{to{clip-path:inset(-8% -8% -8% 0)}}
-  @media (prefers-reduced-motion:reduce){.sweep{color:#fff}.sweep .swbg,.sweep.go .swbg{animation:none;transform:scaleX(1)}.sweep .swtop,.sweep.go .swtop{animation:none;clip-path:inset(-8% -8% -8% 0)}}
 
   .frame{border-radius:17px;overflow:hidden;border:1px solid var(--line-2);background:linear-gradient(180deg,#0c1224,#070b16);box-shadow:0 48px 100px -34px rgba(0,0,0,.82);transform-style:preserve-3d;will-change:transform}
   /* titlebar igual à do app: logo + BALIZ PAINEL à esquerda, Discord + janelas à direita */
@@ -794,13 +796,16 @@
   }
 
   // ── SWEEP da headline: dispara só depois da página carregar e do título
-  //    terminar o reveal (~0.8s) — senão a barra corre antes de dar pra ver ──
-  window.addEventListener('load',function(){
+  //    terminar o reveal (~0.8s) — senão a barra corre antes de dar pra ver.
+  //    Roda mesmo com prefers-reduced-motion (ver nota no CSS). ──
+  function fireSweep(){
     setTimeout(function(){
       var s=document.querySelector('.sweep');
       if(s)s.classList.add('go');
     }, 1000);
-  });
+  }
+  if(document.readyState==='complete'){fireSweep();}
+  else{window.addEventListener('load',fireSweep);}
 
   // ── NAV sólida ao rolar ──
   var nav=document.getElementById('nav');
