@@ -3,321 +3,373 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Baliz Painel — Mais FPS, menos travadas e zero desculpa no Valorant</title>
-<meta name="description" content="O otimizador definitivo para Valorant. Mais FPS, frametime estável, input lag no chão, rede de elite e overlay ao vivo com o rank de todos. Aplicado e verificado no seu Windows — reversível com 1 clique.">
-<meta property="og:title" content="Baliz Painel — Otimizador definitivo de Valorant">
-<meta property="og:description" content="Mais FPS, menos travadas, input lag no chão e o rank de todo mundo da partida na sua tela. Reversível, seguro, brutal.">
+<title>Baliz Painel — Desempenho e leitura de partida para Valorant</title>
+<meta name="description" content="O painel nativo que afina o seu Windows para mais FPS e estabilidade, derruba o input lag e mostra o rank de todos da partida no overlay. Leve, reversível e tudo em um app só.">
+<meta property="og:title" content="Baliz Painel — Desempenho e leitura de partida para Valorant">
+<meta property="og:description" content="Otimização real de FPS, input lag baixo, overlay ao vivo com o rank de todos e diagnóstico do seu hardware. Nativo, leve e 100% reversível.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   :root{
-    --bg:#070b18; --bg2:#0a1024; --surface:rgba(255,255,255,.025); --surface2:rgba(255,255,255,.04);
-    --border:rgba(255,255,255,.08); --border2:rgba(255,255,255,.14);
-    --text:#eef0f7; --muted:#9aa0b4; --dim:#646a80;
-    --accent:#7c3aed; --accent2:#6366f1; --bright:#a78bfa; --glow:rgba(124,58,237,.5);
-    --green:#34d399; --amber:#fbbf24; --red:#ff4655;
+    --bg:#070a12;
+    --bg-2:#0a0e1a;
+    --panel:rgba(255,255,255,.024);
+    --panel-2:rgba(255,255,255,.042);
+    --line:rgba(255,255,255,.07);
+    --line-2:rgba(255,255,255,.13);
+    --ink:#eef1f8;
+    --mut:#98a0b5;
+    --dim:#5a6178;
+    --vio:#8b5cf6;
+    --ind:#6366f1;
+    --cy:#38bdf8;
+    --hi:#b8a8ff;
+    --glow:rgba(124,58,237,.4);
+    --grn:#34d399;
+    --amb:#fbbf24;
+    --red:#fb7185;
     --r:16px;
   }
   html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;letter-spacing:-.011em;overflow-x:hidden}
-  ::selection{background:rgba(124,58,237,.35)}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;letter-spacing:-.011em;overflow-x:hidden}
+  ::selection{background:rgba(139,92,246,.32)}
   a{color:inherit;text-decoration:none}
-  .wrap{max-width:1180px;margin:0 auto;padding:0 26px}
-  .muted{color:var(--muted)} .bright{color:var(--bright)}
-  .grad{background:linear-gradient(110deg,#fff 10%,#c4b5fd 45%,#818cf8 90%);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--bright)}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+  .mut{color:var(--mut)}
+  .grad{background:linear-gradient(105deg,#fff 8%,#c7bbff 46%,#7fd3ff 94%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--hi)}
+  .eyebrow::before{content:"";width:26px;height:1.5px;background:linear-gradient(90deg,var(--vio),transparent)}
+  .display{font-family:'Space Grotesk',sans-serif}
 
-  /* ambient glows */
-  .orb{position:fixed;border-radius:50%;filter:blur(90px);z-index:-1;pointer-events:none;opacity:.7;will-change:transform}
-  .orb1{width:780px;height:620px;top:-260px;left:-160px;background:radial-gradient(ellipse,rgba(124,58,237,.30),transparent 65%);animation:drift1 28s ease-in-out infinite}
-  .orb2{width:680px;height:520px;top:480px;right:-200px;background:radial-gradient(ellipse,rgba(56,90,240,.20),transparent 65%);animation:drift2 36s ease-in-out infinite}
-  @keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(70px,46px) scale(1.09)}}
-  @keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-56px,-34px) scale(1.12)}}
-  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
-  .grid-bg{position:fixed;inset:0;z-index:-2;background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);background-size:62px 62px;mask-image:radial-gradient(ellipse at 50% 0%,#000 12%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at 50% 0%,#000 12%,transparent 70%)}
+  /* backdrop */
+  .grid-bg{position:fixed;inset:0;z-index:-3;
+    background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+    background-size:66px 66px;
+    mask-image:radial-gradient(ellipse 85% 55% at 50% 0%,#000 5%,transparent 72%);
+    -webkit-mask-image:radial-gradient(ellipse 85% 55% at 50% 0%,#000 5%,transparent 72%)}
+  .aura{position:fixed;border-radius:50%;filter:blur(120px);z-index:-2;pointer-events:none;will-change:transform}
+  .a1{width:720px;height:640px;top:-300px;left:-140px;background:radial-gradient(circle,rgba(124,58,237,.28),transparent 62%);animation:drift1 38s ease-in-out infinite}
+  .a2{width:600px;height:520px;top:560px;right:-180px;background:radial-gradient(circle,rgba(56,189,248,.13),transparent 62%);animation:drift2 46s ease-in-out infinite}
+  @keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(54px,38px) scale(1.07)}}
+  @keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-46px,-28px) scale(1.09)}}
+  .noise{position:fixed;inset:0;z-index:80;pointer-events:none;opacity:.022;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .scan{position:fixed;top:0;left:0;height:2px;width:0;z-index:99;background:linear-gradient(90deg,var(--vio),var(--cy));box-shadow:0 0 12px var(--glow);will-change:width}
 
   /* buttons */
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;height:50px;padding:0 26px;border-radius:13px;
-    font-size:15.5px;font-weight:700;cursor:pointer;border:1px solid transparent;transition:transform .16s ease,box-shadow .16s ease,background .16s ease;white-space:nowrap}
-  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;box-shadow:0 10px 30px -8px var(--glow)}
-  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 40px -8px var(--glow)}
-  .btn-ghost{background:var(--surface2);border-color:var(--border2);color:var(--text)}
-  .btn-ghost:hover{background:rgba(255,255,255,.07);transform:translateY(-2px)}
-  .btn-lg{height:56px;padding:0 32px;font-size:16.5px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;height:50px;padding:0 26px;border-radius:12px;
+    font-size:14.5px;font-weight:650;cursor:pointer;border:1px solid transparent;white-space:nowrap;
+    transition:transform .32s cubic-bezier(.16,1,.3,1),box-shadow .32s cubic-bezier(.16,1,.3,1),background .3s,border-color .3s}
+  .btn svg{transition:transform .32s cubic-bezier(.16,1,.3,1)}
+  .btn-fill{background:linear-gradient(135deg,var(--vio),var(--ind));color:#fff;box-shadow:0 10px 30px -10px var(--glow)}
+  .btn-fill:hover{transform:translateY(-2px);box-shadow:0 18px 40px -12px var(--glow)}
+  .btn-fill:hover svg{transform:translateX(3px)}
+  .btn-line{background:var(--panel-2);border-color:var(--line-2);color:var(--ink)}
+  .btn-line:hover{background:rgba(255,255,255,.07);transform:translateY(-2px)}
+  .btn-lg{height:56px;padding:0 32px;font-size:15.5px}
 
   /* nav */
-  nav{position:sticky;top:0;z-index:60;background:rgba(7,11,24,.72);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
-  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:66px}
-  .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:17px;letter-spacing:-.02em}
-  .mark{width:36px;height:36px;border-radius:10px;display:block;object-fit:contain;
-    filter:drop-shadow(0 4px 14px var(--glow))}
-  .nav-links{display:flex;align-items:center;gap:30px}
-  .nav-links a:not(.btn){font-size:14.5px;color:var(--muted);font-weight:600;transition:color .15s}
-  .nav-links a:not(.btn):hover{color:var(--text)}
-  @media(max-width:860px){.nav-links a:not(.btn){display:none}}
+  nav{position:sticky;top:0;z-index:60;border-bottom:1px solid transparent;transition:background .4s,border-color .4s,backdrop-filter .4s}
+  nav.stuck{background:rgba(7,10,18,.74);backdrop-filter:blur(18px) saturate(140%);border-color:var(--line)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:70px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:750;font-size:16.5px;letter-spacing:-.02em}
+  .brand img{width:36px;height:36px;border-radius:9px;object-fit:contain;filter:drop-shadow(0 4px 14px var(--glow))}
+  .links{display:flex;align-items:center;gap:32px}
+  .links a:not(.btn){font-size:14px;color:var(--mut);font-weight:550;position:relative;transition:color .25s}
+  .links a:not(.btn)::after{content:"";position:absolute;left:0;bottom:-5px;width:0;height:1.5px;background:var(--hi);transition:width .3s cubic-bezier(.16,1,.3,1)}
+  .links a:not(.btn):hover{color:var(--ink)}
+  .links a:not(.btn):hover::after{width:100%}
+  @media(max-width:880px){.links a:not(.btn){display:none}}
 
-  /* reveal — entrada premium: sobe + escala leve + desfoque que limpa, curva expo longa.
-     A cascata (transition-delay por item) é setada no JS pra tudo surgir aos poucos. */
-  .reveal{opacity:0;transform:translateY(30px) scale(.98);filter:blur(8px);
-    transition:opacity 1.3s cubic-bezier(.16,1,.3,1),transform 1.3s cubic-bezier(.16,1,.3,1),filter 1.3s cubic-bezier(.16,1,.3,1)}
-  .reveal.in{opacity:1;transform:none;filter:blur(0)}
+  /* reveal */
+  .rv{opacity:0;transform:translateY(26px);transition:opacity .8s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1);will-change:opacity,transform}
+  .rv.in{opacity:1;transform:none}
+  .rv-s{opacity:0;transform:translateY(22px) scale(.975);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1)}
+  .rv-s.in{opacity:1;transform:none}
 
   /* hero */
-  .hero{padding:78px 0 40px;text-align:center;position:relative}
-  .badge{display:inline-flex;align-items:center;gap:9px;font-size:13px;font-weight:600;color:var(--muted);
-    background:var(--surface);border:1px solid var(--border);padding:7px 15px;border-radius:30px;margin-bottom:30px}
-  .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
-  h1{font-size:clamp(38px,6vw,68px);font-weight:900;line-height:1.02;letter-spacing:-.04em;max-width:900px;margin:0 auto}
-  .hero .lead{font-size:clamp(16px,1.8vw,20px);color:var(--muted);max-width:640px;margin:24px auto 0;line-height:1.6;font-weight:500}
-  .hero-actions{display:flex;gap:13px;justify-content:center;margin-top:38px;flex-wrap:wrap}
-  .trust{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;margin-top:30px;font-size:13px;color:var(--dim);font-weight:600}
-  .trust span{display:inline-flex;align-items:center;gap:7px}
-  .trust svg{color:var(--green)}
+  .hero{position:relative;padding:74px 0 26px;text-align:center}
+  .tagline{display:inline-flex;align-items:center;gap:9px;font-size:12.5px;font-weight:550;color:var(--mut);
+    background:var(--panel);border:1px solid var(--line);padding:7px 16px;border-radius:30px;margin-bottom:28px}
+  .tagline .d{width:7px;height:7px;border-radius:50%;background:var(--grn);box-shadow:0 0 0 0 rgba(52,211,153,.5);animation:beat 2.6s ease-out infinite}
+  @keyframes beat{0%{box-shadow:0 0 0 0 rgba(52,211,153,.5)}70%{box-shadow:0 0 0 8px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
+  h1{font-size:clamp(38px,6vw,70px);font-weight:850;line-height:1.03;letter-spacing:-.045em;max-width:880px;margin:0 auto}
+  .lead{font-size:clamp(16px,1.65vw,19px);color:var(--mut);max-width:670px;margin:26px auto 0;line-height:1.65;font-weight:420}
+  .lead b{color:var(--ink);font-weight:600}
+  .cta-row{display:flex;gap:13px;justify-content:center;margin-top:38px;flex-wrap:wrap}
+  .micro{margin-top:18px;font-size:13px;color:var(--dim)}
 
-  /* app mockup */
-  .shot{margin:54px auto 0;max-width:1000px;position:relative}
-  .shot:before{content:"";position:absolute;inset:-2px -2px 40% -2px;background:linear-gradient(180deg,rgba(124,58,237,.35),transparent);filter:blur(60px);z-index:-1;border-radius:30px}
-  .win{border-radius:16px;overflow:hidden;border:1px solid var(--border2);background:linear-gradient(180deg,#0c1226,#080d1c);box-shadow:0 40px 90px -30px rgba(0,0,0,.8);animation:floaty 7s ease-in-out infinite;will-change:transform}
-  .titlebar{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
-  .dots{display:flex;gap:6px}.dots i{width:11px;height:11px;border-radius:50%;display:block}
-  .dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
-  .tb-title{font-size:12.5px;color:var(--dim);font-weight:700;margin-left:6px;letter-spacing:.02em}
-  .app{display:grid;grid-template-columns:172px 1fr;min-height:360px}
-  .side{border-right:1px solid var(--border);padding:14px 10px;display:flex;flex-direction:column;gap:3px;background:rgba(255,255,255,.015)}
-  .side .it{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:9px;font-size:12.5px;color:var(--muted);font-weight:600}
-  .side .it.on{background:linear-gradient(135deg,rgba(124,58,237,.22),rgba(99,102,241,.12));color:#fff;border:1px solid rgba(124,58,237,.3)}
-  .side .it b{width:15px;height:15px;border-radius:4px;background:currentColor;opacity:.55;display:block}
-  .side .it.on b{opacity:1;background:var(--bright)}
-  .body{padding:20px;display:flex;flex-direction:column;gap:14px}
-  .scorebar{display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:13px;background:linear-gradient(135deg,rgba(124,58,237,.14),rgba(99,102,241,.05));border:1px solid rgba(124,58,237,.22)}
-  .ring{width:62px;height:62px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;
-    background:conic-gradient(var(--accent) 0 86%,rgba(255,255,255,.08) 86% 100%);position:relative}
-  .ring:after{content:"";position:absolute;inset:6px;border-radius:50%;background:#0a1024}
-  .ring span{position:relative;z-index:1}
-  .sc-txt b{font-size:15px;font-weight:800}.sc-txt p{font-size:12px;color:var(--muted);margin-top:2px}
-  .cards{display:grid;grid-template-columns:1fr 1fr;gap:11px}
-  .mc{padding:13px 15px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px}
-  .mc .l b{font-size:12.5px;font-weight:700;display:block}.mc .l p{font-size:11px;color:var(--dim);margin-top:2px}
-  .tog{width:38px;height:21px;border-radius:11px;flex:0 0 auto;background:linear-gradient(135deg,var(--accent),var(--accent2));position:relative}
-  .tog:after{content:"";position:absolute;width:15px;height:15px;border-radius:50%;background:#fff;top:3px;right:3px}
-  .tog.off{background:rgba(255,255,255,.12)}.tog.off:after{right:auto;left:3px}
-  @media(max-width:680px){.app{grid-template-columns:1fr}.side{display:none}.cards{grid-template-columns:1fr}}
+  /* trust line */
+  .trust{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:40px}
+  .trust .t{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600;color:var(--mut);
+    background:var(--panel);border:1px solid var(--line);padding:8px 14px;border-radius:10px}
+  .trust .t svg{color:var(--hi)}
+
+  /* device */
+  .device{margin:54px auto 0;max-width:1000px;position:relative;perspective:1700px}
+  .device::before{content:"";position:absolute;inset:-4px -4px 36% -4px;background:linear-gradient(180deg,rgba(124,58,237,.35),transparent);filter:blur(72px);z-index:-1;border-radius:30px}
+  .frame{border-radius:17px;overflow:hidden;border:1px solid var(--line-2);background:linear-gradient(180deg,#0c1224,#070b16);box-shadow:0 48px 100px -34px rgba(0,0,0,.82);transform-style:preserve-3d;will-change:transform}
+  .topbar{display:flex;align-items:center;gap:8px;padding:12px 15px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.016)}
+  .traffic{display:flex;gap:7px}.traffic i{width:11px;height:11px;border-radius:50%;display:block}
+  .traffic i:nth-child(1){background:#ff5f57}.traffic i:nth-child(2){background:#febc2e}.traffic i:nth-child(3){background:#28c840}
+  .topbar .tt{font-size:12px;color:var(--dim);font-weight:650;margin-left:7px;letter-spacing:.02em}
+  .app{display:grid;grid-template-columns:178px 1fr;min-height:376px}
+  .rail{border-right:1px solid var(--line);padding:15px 11px;display:flex;flex-direction:column;gap:3px;background:rgba(255,255,255,.01)}
+  .rail .it{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;font-size:12px;color:var(--mut);font-weight:600}
+  .rail .it.on{background:linear-gradient(135deg,rgba(124,58,237,.22),rgba(99,102,241,.09));color:#fff;border:1px solid rgba(124,58,237,.3)}
+  .rail .it b{width:14px;height:14px;border-radius:4px;background:currentColor;opacity:.5;display:block}
+  .rail .it.on b{opacity:1;background:var(--hi)}
+  .screen{padding:20px;display:flex;flex-direction:column;gap:14px}
+  .hud{display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:13px;background:linear-gradient(135deg,rgba(124,58,237,.14),rgba(99,102,241,.04));border:1px solid rgba(124,58,237,.2)}
+  .gauge{width:62px;height:62px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;position:relative;
+    background:conic-gradient(var(--vio) 0 86%,rgba(255,255,255,.07) 86% 100%)}
+  .gauge::after{content:"";position:absolute;inset:6px;border-radius:50%;background:#0a0f1e}
+  .gauge span{position:relative;z-index:1}
+  .hud-t b{font-size:15px;font-weight:750}.hud-t p{font-size:11.5px;color:var(--mut);margin-top:3px}
+  .row2{display:grid;grid-template-columns:1.12fr .88fr;gap:11px}
+  @media(max-width:680px){.row2{grid-template-columns:1fr}}
+  .mon{padding:14px 16px;border-radius:13px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.013));border:1px solid var(--line);display:flex;flex-direction:column;gap:9px}
+  .mon-top{display:flex;align-items:center;justify-content:space-between}
+  .mon-top .l{font-size:9px;font-weight:800;letter-spacing:.13em;color:var(--dim)}
+  .state{font-size:9.5px;font-weight:800;letter-spacing:.04em;padding:3px 9px;border-radius:20px;transition:all .5s}
+  .state.bad{color:#fda4af;background:rgba(251,113,133,.14);border:1px solid rgba(251,113,133,.3)}
+  .state.good{color:#6ee7b7;background:rgba(52,211,153,.14);border:1px solid rgba(52,211,153,.3)}
+  .fps{display:flex;align-items:baseline;gap:7px}
+  .fps-n{font-size:44px;font-weight:700;letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1;transition:color .5s;font-family:'Space Grotesk',sans-serif}
+  .fps-u{font-size:12.5px;font-weight:800;color:var(--dim)}
+  .bars{display:flex;align-items:flex-end;gap:3px;height:44px}
+  .bars i{flex:1;height:100%;border-radius:2px;transform:scaleY(.3);transform-origin:bottom;will-change:transform;
+    background:linear-gradient(180deg,var(--hi),var(--ind));transition:background .6s}
+  .bars.bad i{background:linear-gradient(180deg,#fb7185,#9f1239)}
+  .mon-f{font-size:10px;color:var(--mut);font-weight:600;display:flex;align-items:center;gap:6px}
+  .mon-f .p{width:6px;height:6px;border-radius:50%;background:var(--grn);box-shadow:0 0 8px var(--grn);animation:blink 1.7s ease-in-out infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.32}}
+  .sws{display:flex;flex-direction:column;gap:8px}
+  .sw{padding:10px 12px;border-radius:10px;background:var(--panel-2);border:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .sw .l b{font-size:11.5px;font-weight:700;display:block}.sw .l p{font-size:10px;color:var(--dim);margin-top:2px}
+  .tg{width:36px;height:20px;border-radius:11px;flex:0 0 auto;background:linear-gradient(135deg,var(--vio),var(--ind));position:relative}
+  .tg::after{content:"";position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:3px;right:3px}
+  @media(max-width:680px){.app{grid-template-columns:1fr}.rail{display:none}}
 
   /* sections */
-  section{padding:78px 0;position:relative}
-  .sec-head{text-align:center;max-width:680px;margin:0 auto 50px}
-  .sec-head h2{font-size:clamp(28px,3.6vw,44px);font-weight:900;letter-spacing:-.035em;line-height:1.08}
-  .sec-head p{font-size:17px;color:var(--muted);margin-top:16px;line-height:1.6}
+  section{padding:92px 0;position:relative}
+  .head{text-align:center;max-width:680px;margin:0 auto 56px}
+  .head h2{font-size:clamp(28px,3.6vw,44px);font-weight:850;letter-spacing:-.04em;line-height:1.08;margin-top:16px}
+  .head p{font-size:16.5px;color:var(--mut);margin-top:16px;line-height:1.62}
+
+  /* stat strip */
+  .strip{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--panel);max-width:960px;margin:0 auto}
+  @media(max-width:680px){.strip{grid-template-columns:1fr 1fr}}
+  .st{text-align:center;padding:28px 16px;border-right:1px solid var(--line)}
+  .st:last-child{border-right:none}
+  @media(max-width:680px){.st:nth-child(2){border-right:none}.st:nth-child(1),.st:nth-child(2){border-bottom:1px solid var(--line)}}
+  .st .n{font-size:clamp(28px,4vw,40px);font-weight:700;letter-spacing:-.03em;line-height:1;font-family:'Space Grotesk',sans-serif;
+    background:linear-gradient(120deg,#fff,#c7bbff 58%,#7fd3ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .st .t{font-size:12px;color:var(--mut);font-weight:600;margin-top:10px}
+
+  /* feature rows (alternating) */
+  .fr{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+  .fr + .fr{margin-top:108px}
+  .fr.rev .fr-vis{order:-1}
+  @media(max-width:900px){.fr{grid-template-columns:1fr;gap:36px}.fr.rev .fr-vis{order:0}.fr + .fr{margin-top:80px}}
+  .fr-text h3{font-size:clamp(24px,3vw,34px);font-weight:800;letter-spacing:-.035em;line-height:1.12;margin:16px 0 16px}
+  .fr-text p{font-size:15.5px;color:var(--mut);line-height:1.7}
+  .fr-text p b{color:var(--ink);font-weight:600}
+  .mini{list-style:none;margin-top:22px;display:flex;flex-direction:column;gap:12px}
+  .mini li{display:flex;gap:11px;font-size:14px;color:var(--mut)}
+  .mini svg{flex:0 0 auto;color:var(--grn);margin-top:3px}
+  .note{margin-top:22px;font-size:12.5px;color:var(--dim);display:flex;gap:9px;align-items:flex-start;
+    background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px 14px;line-height:1.55}
+  .note svg{flex:0 0 auto;color:var(--hi);margin-top:1px}
+
+  /* generic visual card */
+  .vis{border-radius:16px;border:1px solid var(--line-2);background:linear-gradient(180deg,rgba(11,16,34,.9),rgba(8,12,24,.92));padding:16px;box-shadow:0 30px 70px -32px rgba(0,0,0,.7)}
+  .vis-h{display:flex;align-items:center;justify-content:space-between;padding:2px 4px 14px}
+  .vis-h b{font-size:13px;font-weight:750}
+  .vis-h .tab{font-size:9.5px;font-weight:800;letter-spacing:.05em;color:var(--hi);background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.25);padding:3px 9px;border-radius:20px}
+
+  /* overlay table (feature 2) */
+  .team{font-size:10px;font-weight:800;letter-spacing:.13em;color:var(--hi);padding:2px 8px 8px}
+  .ov-cols{display:grid;grid-template-columns:24px 1fr auto auto auto;gap:9px;padding:0 8px 7px;font-size:9px;font-weight:800;letter-spacing:.06em;color:var(--dim)}
+  .pr{display:grid;grid-template-columns:24px 1fr auto auto auto;gap:9px;align-items:center;padding:7px 8px;border-radius:8px;font-size:12px;transition:background .3s}
+  .pr.me{background:rgba(124,58,237,.14)}
+  .pr:hover{background:rgba(255,255,255,.035)}
+  .pr .av{width:24px;height:24px;border-radius:6px;object-fit:cover;background:linear-gradient(135deg,#2a2350,#3a2f6e)}
+  .pr .nm{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pr .rk{display:inline-flex;align-items:center;gap:5px;font-weight:800;font-size:10.5px;white-space:nowrap}
+  .pr .rk img{width:18px;height:18px;flex:0 0 auto}
+  .pr .kd{font-weight:800;font-variant-numeric:tabular-nums;font-size:11.5px}
+
+  /* diagnosis (feature 3) */
+  .diag{display:flex;flex-direction:column;gap:10px}
+  .dg{display:flex;align-items:center;gap:13px;padding:13px 15px;border-radius:12px;background:var(--panel-2);border:1px solid var(--line)}
+  .dg .ico{width:38px;height:38px;border-radius:10px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:var(--hi);background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.2)}
+  .dg .info{flex:1;min-width:0}
+  .dg .info b{font-size:13px;font-weight:750;display:block}
+  .dg .info p{font-size:11.5px;color:var(--mut);margin-top:2px}
+  .dg .badge{font-size:10px;font-weight:800;letter-spacing:.03em;padding:4px 10px;border-radius:20px;white-space:nowrap}
+  .badge.ok{color:#6ee7b7;background:rgba(52,211,153,.13);border:1px solid rgba(52,211,153,.28)}
+  .badge.warn{color:#fcd34d;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.3)}
+
+  /* comparison */
+  .cmp{max-width:1000px;margin:0 auto;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:var(--panel)}
+  .cmp-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr}
+  .cmp-cell{padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;font-size:14px}
+  .cmp-grid > .cmp-cell:nth-last-child(-n+4){border-bottom:none}
+  .cmp-head{font-size:13px;font-weight:800;letter-spacing:-.01em;justify-content:center;text-align:center;
+    background:rgba(255,255,255,.018);min-height:78px;flex-direction:column;gap:5px}
+  .cmp-head .sub{font-size:10.5px;font-weight:600;color:var(--dim);letter-spacing:0}
+  .cmp-grid > .cmp-cell:first-child{justify-content:flex-start}
+  .cmp-feat{font-weight:600;color:var(--ink)}
+  .cmp-feat span{display:block;font-size:11.5px;font-weight:450;color:var(--dim);margin-top:2px}
+  .cmp-val{justify-content:center;text-align:center}
+  /* destaque coluna Baliz (2ª) */
+  .cmp-grid > .cmp-cell:nth-child(4n+2){background:linear-gradient(180deg,rgba(124,58,237,.1),rgba(124,58,237,.04));position:relative}
+  .cmp-head.baliz{background:linear-gradient(180deg,rgba(124,58,237,.2),rgba(124,58,237,.05))}
+  .cmp-head.baliz .brand-mini{display:inline-flex;align-items:center;gap:7px}
+  .cmp-head.baliz img{width:20px;height:20px;border-radius:5px;object-fit:contain}
+  .cmp-head.baliz b{background:linear-gradient(120deg,#fff,#c7bbff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .ck{width:21px;height:21px;flex:0 0 auto}
+  .ck.y{color:var(--grn)}.ck.n{color:#475069}.ck.p{color:var(--amb)}
+  .cmp-foot{text-align:center;font-size:12px;color:var(--dim);margin-top:18px}
+  @media(max-width:760px){
+    .cmp{overflow-x:auto}
+    .cmp-grid{min-width:680px}
+  }
 
   /* pillars */
   .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
   @media(max-width:920px){.pillars{grid-template-columns:1fr 1fr}}
   @media(max-width:600px){.pillars{grid-template-columns:1fr}}
-  .pill{padding:26px;border-radius:var(--r);background:var(--surface);border:1px solid var(--border);transition:transform .5s cubic-bezier(.16,1,.3,1),border-color .5s,background .5s,box-shadow .5s}
-  .pill:hover{transform:translateY(-6px);border-color:var(--border2);background:var(--surface2);box-shadow:0 24px 50px -28px var(--glow)}
-  .pico{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;
-    background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(99,102,241,.08));border:1px solid rgba(124,58,237,.25);color:var(--bright)}
-  .pill h3{font-size:19px;font-weight:800;letter-spacing:-.02em}
-  .pill p{font-size:14.5px;color:var(--muted);margin-top:10px;line-height:1.6}
-  .pill .tag{display:inline-block;margin-top:14px;font-size:11.5px;font-weight:700;color:var(--green);background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);padding:4px 10px;border-radius:20px}
-
-  /* feature list */
-  .feats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-  @media(max-width:920px){.feats{grid-template-columns:1fr 1fr}}
-  @media(max-width:600px){.feats{grid-template-columns:1fr}}
-  .feat{padding:20px;border-radius:14px;background:var(--surface);border:1px solid var(--border);transition:transform .5s cubic-bezier(.16,1,.3,1),border-color .5s,background .5s}
-  .feat:hover{transform:translateY(-4px);border-color:var(--border2);background:var(--surface2)}
-  .feat .fi{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:13px;color:var(--bright);background:rgba(124,58,237,.12);border:1px solid rgba(124,58,237,.2)}
-  .feat h4{font-size:15.5px;font-weight:800;letter-spacing:-.015em}
-  .feat p{font-size:13.5px;color:var(--muted);margin-top:7px;line-height:1.55}
-
-  /* overlay showcase */
-  .showcase{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
-  @media(max-width:860px){.showcase{grid-template-columns:1fr;gap:32px}}
-  .ov-card{border-radius:16px;border:1px solid var(--border2);background:linear-gradient(180deg,rgba(10,16,38,.9),rgba(8,13,28,.9));padding:16px;box-shadow:0 30px 70px -28px rgba(0,0,0,.7)}
-  .ov-row{display:grid;grid-template-columns:24px 1fr auto auto auto;gap:9px;align-items:center;padding:7px 9px;border-radius:8px;font-size:12.5px}
-  .ov-row.me{background:rgba(124,58,237,.14)}
-  .ov-row .ag{width:24px;height:24px;border-radius:6px;object-fit:cover;background:linear-gradient(135deg,#2a2350,#3a2f6e)}
-  .ov-row .nm{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .ov-row .rk{display:inline-flex;align-items:center;gap:5px;font-weight:800;font-size:11px;white-space:nowrap}
-  .ov-row .rk img{width:19px;height:19px;flex:0 0 auto}
-  .ov-row .kd{font-weight:800;font-variant-numeric:tabular-nums}
-  .ladder{display:flex;align-items:center;gap:6px;margin-top:22px;flex-wrap:wrap}
-  .ladder img{width:26px;height:26px;opacity:.92;transition:transform .15s}
-  .ladder img:hover{transform:scale(1.25)}
-  .ladder span{font-size:11.5px;color:var(--dim);font-weight:600;margin-left:4px}
-  .ov-h{display:grid;grid-template-columns:24px 1fr auto auto auto;gap:9px;padding:0 9px 7px;font-size:9.5px;font-weight:800;letter-spacing:.06em;color:var(--dim)}
-  .ov-team{font-size:10px;font-weight:800;letter-spacing:.12em;color:var(--bright);padding:2px 9px 8px}
+  .pill{position:relative;padding:28px;border-radius:17px;background:var(--panel);border:1px solid var(--line);overflow:hidden;
+    transition:transform .5s cubic-bezier(.16,1,.3,1),border-color .5s,background .5s,box-shadow .5s}
+  .pill::before{content:"";position:absolute;inset:0;border-radius:17px;padding:1px;
+    background:linear-gradient(135deg,rgba(139,92,246,.5),transparent 42%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .5s}
+  .pill:hover{transform:translateY(-6px);background:var(--panel-2);box-shadow:0 28px 56px -32px var(--glow)}
+  .pill:hover::before{opacity:1}
+  .pill .ic{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;color:var(--hi);
+    background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(99,102,241,.07));border:1px solid rgba(124,58,237,.24);transition:transform .5s cubic-bezier(.16,1,.3,1)}
+  .pill:hover .ic{transform:scale(1.07) rotate(-4deg)}
+  .pill h4{font-size:18px;font-weight:800;letter-spacing:-.02em}
+  .pill p{font-size:14px;color:var(--mut);margin-top:10px;line-height:1.6}
+  .pill p b{color:var(--ink);font-weight:600}
 
   /* steps */
-  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;counter-reset:s}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;counter-reset:s}
   @media(max-width:760px){.steps{grid-template-columns:1fr}}
-  .step{padding:26px;border-radius:14px;background:var(--surface);border:1px solid var(--border);position:relative}
-  .step:before{counter-increment:s;content:"0" counter(s);font-size:38px;font-weight:900;letter-spacing:-.04em;
-    background:linear-gradient(135deg,var(--bright),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;display:block;margin-bottom:12px}
-  .step h4{font-size:17px;font-weight:800}.step p{font-size:14px;color:var(--muted);margin-top:8px;line-height:1.55}
+  .step{padding:28px;border-radius:16px;background:var(--panel);border:1px solid var(--line);position:relative}
+  .step::before{counter-increment:s;content:"0" counter(s);font-size:40px;font-weight:700;letter-spacing:-.04em;font-family:'Space Grotesk',sans-serif;
+    background:linear-gradient(135deg,var(--hi),var(--ind));-webkit-background-clip:text;background-clip:text;color:transparent;display:block;margin-bottom:13px}
+  .step h4{font-size:17px;font-weight:800}.step p{font-size:13.5px;color:var(--mut);margin-top:8px;line-height:1.58}
 
   /* pricing */
-  .price-wrap{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:760px;margin:0 auto}
-  @media(max-width:680px){.price-wrap{grid-template-columns:1fr}}
-  .plan{padding:30px;border-radius:18px;background:var(--surface);border:1px solid var(--border);position:relative}
-  .plan.hot{border-color:rgba(124,58,237,.5);background:linear-gradient(180deg,rgba(124,58,237,.12),var(--surface));box-shadow:0 24px 60px -24px var(--glow)}
-  .plan .pop{position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
-    background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:5px 14px;border-radius:20px;white-space:nowrap}
-  .plan h3{font-size:17px;font-weight:800}
-  .plan .amt{font-size:44px;font-weight:900;letter-spacing:-.04em;margin:14px 0 2px}
-  .plan .amt small{font-size:16px;font-weight:700;color:var(--muted)}
-  .plan .amt-glow{font-size:58px;background:linear-gradient(120deg,#fff,#c4b5fd 55%,#818cf8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-    filter:drop-shadow(0 4px 22px rgba(124,58,237,.55))}
-  .plan .amt-glow small{-webkit-text-fill-color:var(--muted)}
-  .plan .per{font-size:13px;color:var(--dim);margin-bottom:20px}
+  .prices{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:760px;margin:0 auto}
+  @media(max-width:680px){.prices{grid-template-columns:1fr}}
+  .plan{padding:32px;border-radius:20px;background:var(--panel);border:1px solid var(--line);position:relative;transition:transform .5s cubic-bezier(.16,1,.3,1)}
+  .plan:hover{transform:translateY(-4px)}
+  .plan.hot{border-color:rgba(124,58,237,.46);background:linear-gradient(180deg,rgba(124,58,237,.1),var(--panel));box-shadow:0 26px 60px -28px var(--glow)}
+  .plan .pop{position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:10.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+    background:linear-gradient(135deg,var(--vio),var(--ind));color:#fff;padding:6px 14px;border-radius:20px;white-space:nowrap;box-shadow:0 8px 20px -8px var(--glow)}
+  .plan h3{font-size:16px;font-weight:800}
+  .amt{font-size:44px;font-weight:700;letter-spacing:-.04em;margin:14px 0 2px;font-family:'Space Grotesk',sans-serif}
+  .amt small{font-size:16px;font-weight:700;color:var(--mut)}
+  .amt-glow{font-size:54px;background:linear-gradient(120deg,#fff,#c7bbff 55%,#7fd3ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 4px 22px rgba(124,58,237,.45))}
+  .amt-glow small{-webkit-text-fill-color:var(--mut)}
+  .strike{font-size:14px;color:var(--dim);text-decoration:line-through;margin-top:13px}
+  .per{font-size:12.5px;color:var(--dim);margin-bottom:20px}
   .plan ul{list-style:none;display:flex;flex-direction:column;gap:11px;margin-bottom:24px}
-  .plan li{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--muted)}
-  .plan li svg{color:var(--green);flex:0 0 auto;margin-top:2px}
+  .plan li{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--mut)}
+  .plan li b{color:var(--ink);font-weight:600}
+  .plan li svg{color:var(--grn);flex:0 0 auto;margin-top:3px}
   .plan .btn{width:100%}
+  .pay{text-align:center;color:var(--dim);font-size:12.5px;margin-top:22px}
 
   /* faq */
   .faq{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:11px}
-  details{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:4px 20px;transition:border-color .2s}
-  details[open]{border-color:var(--border2)}
-  summary{list-style:none;cursor:pointer;padding:16px 0;font-size:15.5px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  details{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:3px 22px;transition:border-color .3s,background .3s}
+  details[open]{border-color:var(--line-2);background:var(--panel-2)}
+  summary{list-style:none;cursor:pointer;padding:18px 0;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:14px}
   summary::-webkit-details-marker{display:none}
-  summary .pm{flex:0 0 auto;width:20px;height:20px;position:relative;transition:transform .2s}
-  details[open] summary .pm{transform:rotate(45deg)}
-  summary .pm:before,summary .pm:after{content:"";position:absolute;background:var(--bright);border-radius:2px}
-  summary .pm:before{top:9px;left:2px;right:2px;height:2px}summary .pm:after{left:9px;top:2px;bottom:2px;width:2px}
-  details p{font-size:14px;color:var(--muted);line-height:1.65;padding:0 0 18px}
+  .pm{flex:0 0 auto;width:19px;height:19px;position:relative;transition:transform .35s cubic-bezier(.16,1,.3,1)}
+  details[open] .pm{transform:rotate(135deg)}
+  .pm::before,.pm::after{content:"";position:absolute;background:var(--hi);border-radius:2px}
+  .pm::before{top:8.5px;left:2px;right:2px;height:2px}.pm::after{left:8.5px;top:2px;bottom:2px;width:2px}
+  details p{font-size:13.5px;color:var(--mut);line-height:1.68;padding:0 0 20px}
+  details p b{color:var(--ink);font-weight:600}
 
-  /* cta band */
-  .cta{text-align:center;border-radius:24px;padding:60px 30px;margin:0 26px;
-    background:linear-gradient(135deg,rgba(124,58,237,.18),rgba(99,102,241,.06));border:1px solid rgba(124,58,237,.3);position:relative;overflow:hidden}
-  .cta h2{font-size:clamp(26px,3.6vw,40px);font-weight:900;letter-spacing:-.035em;max-width:620px;margin:0 auto}
-  .cta p{font-size:16px;color:var(--muted);margin:16px auto 30px;max-width:480px}
+  /* final */
+  .final{text-align:center;border-radius:26px;padding:66px 32px;margin:0 28px;position:relative;overflow:hidden;
+    background:linear-gradient(135deg,rgba(124,58,237,.16),rgba(56,189,248,.04));border:1px solid rgba(124,58,237,.28)}
+  .final::before{content:"";position:absolute;top:-55%;left:50%;width:560px;height:560px;transform:translateX(-50%);
+    background:radial-gradient(circle,rgba(124,58,237,.22),transparent 60%);pointer-events:none}
+  .final h2{font-size:clamp(26px,3.8vw,42px);font-weight:850;letter-spacing:-.04em;max-width:600px;margin:0 auto;position:relative}
+  .final p{font-size:16px;color:var(--mut);margin:16px auto 32px;max-width:480px;position:relative}
 
   /* footer */
-  footer{border-top:1px solid var(--border);padding:46px 0 40px;margin-top:80px}
-  .foot{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap}
-  .foot .col h5{font-size:13px;font-weight:800;margin-bottom:12px;letter-spacing:.02em}
-  .foot .col a{display:block;font-size:13.5px;color:var(--muted);margin-bottom:8px}
-  .foot .col a:hover{color:var(--text)}
-  .disclaimer{margin-top:34px;padding-top:22px;border-top:1px solid var(--border);font-size:12px;color:var(--dim);line-height:1.7;max-width:880px}
-
-  /* ── craft: progress, grão, spotlight, tilt ── */
-  .progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:99;background:linear-gradient(90deg,var(--accent),var(--bright));box-shadow:0 0 12px var(--glow);transition:width .1s linear}
-  .grain{position:fixed;inset:0;z-index:90;pointer-events:none;opacity:.035;mix-blend-mode:overlay;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-  .hero .spot{position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:0;transition:opacity .4s;
-    background:radial-gradient(420px circle at var(--mx,50%) var(--my,30%),rgba(124,58,237,.16),transparent 60%)}
-  .hero:hover .spot{opacity:1}
-  .shot{transform:perspective(1600px) rotateX(var(--rx,7deg)) rotateY(var(--ry,0deg));will-change:transform}
-  .shot .win{transition:box-shadow .3s}
-
-  /* botão magnético + brilho que cruza (transform via rAF, sem transition pra não rubber-band) */
-  .btn.magnetic{transition:box-shadow .16s}
-  .btn-primary{position:relative;overflow:hidden}
-  .btn-primary:before{content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;
-    background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-18deg);transition:left .6s ease}
-  .btn-primary:hover:before{left:140%}
-
-  /* live FPS monitor no mockup */
-  .dash{display:grid;grid-template-columns:1.12fr .88fr;gap:11px}
-  @media(max-width:680px){.dash{grid-template-columns:1fr}}
-  .monitor{padding:14px 16px;border-radius:13px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.015));border:1px solid var(--border);display:flex;flex-direction:column;gap:9px}
-  .mon-head{display:flex;align-items:center;justify-content:space-between}
-  .mon-head .lab{font-size:9.5px;font-weight:800;letter-spacing:.12em;color:var(--dim)}
-  .state{font-size:10px;font-weight:800;letter-spacing:.04em;padding:3px 9px;border-radius:20px;transition:all .4s}
-  .state.bad{color:#fda4af;background:rgba(255,70,85,.14);border:1px solid rgba(255,70,85,.3)}
-  .state.good{color:#6ee7b7;background:rgba(52,211,153,.14);border:1px solid rgba(52,211,153,.3)}
-  .fps{display:flex;align-items:baseline;gap:7px}
-  .fps-num{font-size:46px;font-weight:900;letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1;transition:color .4s}
-  .fps-u{font-size:13px;font-weight:800;color:var(--dim)}
-  .ft-bars{display:flex;align-items:flex-end;gap:3px;height:46px}
-  .ft-bars i{flex:1;height:100%;border-radius:2px;transform:scaleY(.3);transform-origin:bottom;will-change:transform;
-    background:linear-gradient(180deg,var(--bright),var(--accent2));transition:background .5s}
-  .ft-bars.bad i{background:linear-gradient(180deg,#fb7185,#9f1239)}
-  .mon-foot{font-size:10.5px;color:var(--muted);font-weight:600;display:flex;align-items:center;gap:6px}
-  .mon-foot .pulse{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:bz-pulse 1.4s ease-in-out infinite}
-  @keyframes bz-pulse{0%,100%{opacity:1}50%{opacity:.35}}
-  .togs{display:flex;flex-direction:column;gap:8px}
-  .togs .mc{padding:10px 12px}
-
-  /* count-up stats band */
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;max-width:920px;margin:0 auto}
-  @media(max-width:680px){.stats{grid-template-columns:1fr 1fr}}
-  .stat{text-align:center;padding:22px 14px;border-radius:14px;background:var(--surface);border:1px solid var(--border)}
-  .stat .n{font-size:clamp(30px,4vw,42px);font-weight:900;letter-spacing:-.03em;line-height:1;
-    background:linear-gradient(120deg,#fff,#c4b5fd 60%,#818cf8);-webkit-background-clip:text;background-clip:text;color:transparent}
-  .stat .t{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:9px}
-
-  /* TAB key + overlay reveal */
-  .tabhint{display:inline-flex;align-items:center;gap:10px;margin-top:24px;font-size:13px;color:var(--muted);font-weight:600}
-  .kbd{display:inline-flex;align-items:center;justify-content:center;min-width:54px;height:34px;padding:0 12px;border-radius:8px;font-size:12px;font-weight:800;letter-spacing:.06em;
-    color:var(--text);background:linear-gradient(180deg,#1a2138,#10162a);border:1px solid var(--border2);box-shadow:0 3px 0 rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.08);transition:transform .1s,box-shadow .1s}
-  .kbd.down{transform:translateY(3px);box-shadow:0 0 0 rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.08),0 0 16px var(--glow)}
-  .ov-stage{position:relative}
-  .ov-card{transition:opacity .45s cubic-bezier(.2,.7,.2,1),transform .45s cubic-bezier(.2,.7,.2,1),filter .45s}
-  .ov-stage.held .ov-card{opacity:1;transform:none;filter:none}
-  .ov-stage:not(.held) .ov-card{opacity:.32;transform:translateY(14px) scale(.985);filter:saturate(.5) blur(1px)}
-  .ov-tag{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3;font-size:12px;font-weight:800;letter-spacing:.04em;color:var(--text);
-    background:rgba(10,16,38,.85);border:1px solid var(--border2);padding:9px 16px;border-radius:30px;backdrop-filter:blur(6px);transition:opacity .3s;pointer-events:none}
-  .ov-stage.held .ov-tag{opacity:0}
+  footer{border-top:1px solid var(--line);padding:50px 0 42px;margin-top:88px}
+  .foot{display:flex;justify-content:space-between;gap:36px;flex-wrap:wrap}
+  .foot .col h5{font-size:12.5px;font-weight:800;margin-bottom:14px;letter-spacing:.02em}
+  .foot .col a{display:block;font-size:13px;color:var(--mut);margin-bottom:9px;transition:color .25s}
+  .foot .col a:hover{color:var(--ink)}
+  .legal{margin-top:38px;padding-top:24px;border-top:1px solid var(--line);font-size:11.5px;color:var(--dim);line-height:1.75;max-width:900px}
 
   @media(prefers-reduced-motion:reduce){
-    *{animation-duration:.001ms!important;transition-duration:.05ms!important}
-    .shot{transform:none}
+    *{animation-duration:.001ms!important;transition-duration:.06ms!important}
+    .frame{transform:none!important}
+    .rv,.rv-s{opacity:1!important;transform:none!important}
   }
 </style>
 </head>
 <body>
-<div class="progress" id="progress"></div>
-<div class="grain"></div>
-<div class="grid-bg"></div><div class="orb orb1"></div><div class="orb orb2"></div>
+<div class="scan" id="scan"></div>
+<div class="noise"></div>
+<div class="grid-bg"></div>
+<div class="aura a1"></div><div class="aura a2"></div>
 
 <!-- NAV -->
-<nav>
+<nav id="nav">
   <div class="wrap">
-    <div class="brand">
-      <img class="mark" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAADBESURBVHhe7X0JcBzXeaaUzSZOvLHj2EksicRFgiTu+5gbAA9RZ5wt2/HWerOyU+VssslGsXnhJk7iPgcYDAbgJdKWFduV2LLL63htJ1lLjpyq7CaKU7Y3K1u2RAJzT/dcAF7/W///3uvuadK1EgOSEIW/6qv3+nVPv8Z83/vf/44e3Hffru3aru3aru3aru3aru3aru3aru3a9ts3Pd/8+WePR5743G8lP3Dh0fBjq23xR84fjz966YnI4xcejT+2cjj8GJYTHg4/duFw/LHVY5HHzx+PPLF6LP445i8eiTx5/mj8idXDkceXD0eoDNPlYzxPeIR/JnBUfE6cDxyPPCHvhecwf/GxyJPnj8fpWll2XuaPxp+4+HDkScxjHXiM1156JP44XoPAe/HnwDJ+n5UjkScDbZEnVg7HH1s5HjsWOJZsvHg8tu/SB+LvBbjvfuv38rax3t7en/vck8qffOm3AT59DOB8K8ClIwDPHAe4fAzgMuYfFsdHAS4d5inlj3DgNZhePCwg85iKc5fw+qOmc+K8uZzudYzXZ74/XWO6Jx2Le9Bn8PpjRn0XzM9hqg/L6dxRgOXWDfC3JjMrxzJBf2v6HwOt6T+/+Ei2L3AsfRxFYf2e7nk735b+/WfcAKueLQh4stqyJ6sFWrLaSuuGttLCj83w68jkgJ/n+SW9nF+7lPO5DW3ZsyHKjeuwzuWWDW3ZlBqfyb2HrEtC1mncLy3K0jqMZ83CSssmrLYyOO8BeKaNN4DVNoDltnTwwpHsF1cPp3736mOx91i/q3vWVtzKnzx7GEWwiSJgqy0bhBVPluExYtmTYct6as6nTWU3O8brOAKeDR1GmShv4Xmqs0WeNz7vz6lT3pPX4c95Ljw2w/o8xjUBcS+8BkWCoriM3qUVYKUl+/qFo9mZS49mSqzf1z1pF1sz7Z9FV9myCedbBBFIFLVIiYwJ4tiTNspaMW86pjJEVgsQNijPjzdMMM6brzFg3MfIZzS/AOYDsqxFlGMqYH0mKievkEYPQgLgQkmzJXeKLblS2mqLBleOkBCyFw5vBC4fS++3fmf3nH3meHbgC8cBVtAlUwuhloVkw3JLBngq87kItGZhuTUDy3qaAT+meH1rFgJtG7DctiGuw5Tnc8HL+T3M4Pfj98nCclsGltuy4KdUAM/LVNTtb03zZ5CgZ8mAv0U+m8i3pAHFsORJaX43isEQxUrLFlw9ArB6eEO5cCzT+dyHnvs31u/tnrIrbam557A/ROLd3H3yPj6DZeILy4AfjyX5LQaJuYSJa0xpAEF5vN5KnOkeLVmqR5Kk3wcFYCLZyKeJyCWRGuSnDaGariOBYErgf8+SPBaeQWLJnWYBIYRAS+aF1WORKuv3dk/Zqjt14VkPgN+NX4QUAblM/HLoy5J53TPoZGRzW50gAb9Y7imkAASwXH7OJBZdaJwQPS+J10k0AQkkEol8eV9eBx0Lgvn9hWBkKv82cZ6u4QElW/KkmN+TYotuVbvYCnDh6Gby8m+nftf6vd1Tdt6ZuYIxAQ+20gxd45I7rfndGVhypwmSGHML01ukTqwkzNSS6do0BETLzyXRQrwgRS/LIc5otTr5JlDrF57gxs+n9M/oeaorZQjOw8uwa8DYwOdOkhjOt2lw9TiOGtRe6/d2zxjOE1xoyX7h2Tb0BNwNLrlSGCRpugCs7ll+0cLVytZvFgahTXgCU58tPyuJpbzubbgwOBkmCNKMvEFqjhCk9zCJikjH6wnis3rK8z55b/x7eTmOFsRIJwvP0GghPWX97u4Z89f93b+91LLx31EEPidFxwQfCUAQpLcss1sWpFuPBYh4Qb6MAyTpBpAkkUcBWMkXkCRh6vOkxDEnEVsziQHz1F2J1n8D2SbSiWxM+b3MWOLPgcEidQn4XJ/FiahH0mPW7+6esctHr73zvDPzV1c9AEskAu4J+BcliDG5V3Pro9YoXLs5eLNG+Lp4pKBMgqB7U/DJvYH0BESQO6V3R0QSkSbJNbyC3ur11ER4CxcOHsv7YbqoH4v7CUEifC1cBOgJVlo24LMP4ygh/t+s3909Y7ONoXetuLLfudLCPYHPIbzBTVqk2fVKz3BDF2ASgdndS/FQYCjKRTCmH9N1giRJuJ43IeeZxGf4ZzmpKGCjtXNR3HjPJC9HgZA3k56O4gMKEBEBnEBzZTWvK+K2fnfbbl98HH4ZPgR3fCx66fBP37vq2vj7yy6ARUdSxANpZnKNoqUZrZXnJZFItpxHMIjX+3gxDOP3kZ/jcw78mH9GkspbvEkIOnkGmVIsMmA1H5s/q4tDkC3J58TfGCxKYfs8Kc3nSTHEqgcg4En/+LZPIX/+qPIbn388Pv/N3lfeYT13uy3QdP03V5ozL192A6AAxMgAoX+xPDZA0rI4gjCEoJMoy/k5ut7Nr+dCkiTzMut9zNcgiYvorpEwl2jVJI6MnqdncqVxSEvg9VkFIEine5i8gEeKQArAHDzq8Qc2AgKuKawcS61Yv7dttyuPKt+6+njma9byO2HLntCeiy2b37+CgSF6AWeS4HMlNQQOFSlQoiGjgDjmizLyfEbz0YiCRhU5Czby83QPWSaOET4dKW3RnRJpUs/nwJXScGqX6nHxYwGTN7B4EZMIdK8gWj+lslswvB+NDnDB6nzrFgRaEg7r97attmyP/fFfHANYPpK8aD13J+wzD6cLzrs3XrlA3YFK3YHfxecKJGgW0ZVhy26x4OLOCGAQySHLKO/in6EFGizXy8SMnPisBI7LZR9MU7eijD+LgF6nUa/PmWT4zD4XF63e+q2xhBhR8NQQgA49kMSugMTIfJ4ku9ACsOhS/6f1O9tWm22MNy/bt+A5XKt/IrVkPX8nbN65fmDFkfnp1TaAi20AlzBtAbjoAbjg5imuql1u46DzOIvmATjv5ileT+daxfXiM3Qsyqi8xSinc1gPAo9N99bLBczX49JvwM3A50yDz5EkIaAHk0KgbuSG1i/cvN7/oxDMIpDI4KhBxANpDfc0nH8kfdT6nW2bzR7/wbuW3ak1/OL/7AmAZx5PT1ivuRO22hYqvdCa+cZya+q7y63qd3wu5QWfQ/k2wam+sOxRXwi0Jb+93Jb8ts+jvkDnncqLiCWn+qLfxa9ZaUm9GHCnXvQ71Rd8zsQLSy6FH7tSL2Le71Je8LvVFwMtWKa+QMeYeiQUuveSW/02P6++sOxOfpvOtagvLrnU7/hs6ss+e2Jtxb0JVw7jgheKIckWJbAL04NLw/1zsjO0xiC7ABo60vDRGEUg8bIrwI0ySy3Jr1i/r221S8dSX/8MBh0tWe25R3CRItVjvWbXcuz+QPOrv3bhaMpxvi095rOnXr/gxGFthscy2H3wFiyIFv29bO1SAHq3YEwQ8YASu4IMzo8wnzsLy+7M5jMPxw9aH2Lb7JnjyYHnHgYc3jC/Owu0q8eVfNp63a7d3OYP//S9fnt6GruI860Mh33oBdgi9uWWVo+uX5/YEuLAiSI+ApEeIIN5DE7ZoivFcC9B4LDaba132+zi0dixy4c1vdKAZwOuHMWtTenfs167az/bLh5PfvBS20Z6xbMFKAAezKU0OYOJkz9LrcZ8gK/VKgCTN+DHNCS80IbdQOpFa33bZpcOx9+7aFOjfvcWjo8pEsa9bhdbNQgcVn7Hev2u/WxbaYk/tura3ML9inJkQcGdOeATkT+6/8UWjpzuQAwnF3hAyZY8G7DUlkmvPBrJt9a3beZrUv8ahx3+lgwFH+jGcF/bpcNbm+db449ar9+1n22B1vTZzxzhXar4LnFol9vXSwGQCExlYuSA3cECzkm4UtgNaM8cBQgcu42N0e9WxrCv4YEHn5rFVapVD4PVlmxq9XjKaf3Mrt3cvvLH2i9eaMv8EBsQJ5DiAe7iqY+XcwNCAKLlm7uCRVcaFlyiG3CnaDSwfFgZtda1bXa+Lf4EBjE0hCG3w3ev4MOv4hj82Fb0mcfVWuvndu3mtuRQnr7oBvDyYSG1YqOfNxFNrT6p52U5kk8CQAG5UwzfRVj0KH9urWfbbMm1/oDPnlSX3BvYP9EQBCtHMSy6k+wCbljwbLy+7IwfsH5212602drYvvmGZHYBh4b4HXJXjm7dCPj0PBeA7P/pOldSCIDEw+hdg9bUS9Z6ttWWneoLq7hMS3vWUmzBmQSvU8W5cbbgUhnNvB3JvnLpQ6k862d37Qa7f6FJ/YeASxPdgBCA0yB3QbZ8cvlGnrf+JImFAkEn7hfQYMml/AA31lgr2jbz25URnOpcIMIJGIRQP4QiQGAwcunI5stXH0+8z/r5Xcs1v1P9Ak4bLzhNAtBbNxJuEoAbCU+SEDCVXcCCO6khF0vuLfDalZ+O2oO/Yq1n28zfFH8S59YXPNRfIeHaoodHo+gBSASeJLvcChBwZl56pjH0Lus9ds0wvzNxEUdWCzRFnGI6qSYRyC6BWrueF+dyBLCJeyeu+Y/Au631bJstuMJ7F52p9JJnk1o9r1x/YI0mNzz4h6gMF1VWDqe/9dk/ffWXrPfZNW6BlsRnsUv1OpLYnTLu/kVwJ1y9jAs4ZOuX7p9/7ygAv2cLFmzqT7yla//OWs+22qJT/e4KegERfFAXIB6YByp8SzN6gyu4fnA0/eV7/g2XW7RFu/r1ZTfAvENlOBowCyAHZvIJhii8LlVbcKdYAGMzR/J7H7rvNn/Xi87EDC6b8qlMGr/i0qSIWmnXjIblFCh6+PjU50letd7n7W7+ur/75bnmxGuLri1DANLtm8j3cjdvEUFOGcVjOBRfdKp/Za1n283nTHwQ1+ClyzcFgiJapYCFxwieFPO6kxrOHyy7U4vWe72dbcGutAY8WzDvTGnzTpXNO1XNi6MqU98v+vgbIYTh5aMA6j5wud7rjN/+LWK4TWvBpiYXnVmqHIeBRr+VE7nS8FBAw8WjwNH0iPV+b1dbcipfON8CMO/E75Cg0bDalQSviWzM33CM15AIeP+/4EoxfNXc71H+yFrPbbGF5sSLAZzFIgFw16W3/pzxqkpeAkXga8nQCmKgTT1lvd/bzRacEY/ftaHNO9Iad/8p/B5xVpDInXepgmSDfCkEfl4HNj62iBtd8VX3o2q1ta7bYgt2dRrnA7gAVOoGyG05ZR/Gx6ti/KrHBLi9GWcMl5yJP7De8+1ifs9r7/PaUv/idzOYQ9fvQCQ1rzMlSFVvEIDR6vEcJ3/OmQTsOtADBDwanvvec3dqC7/fmfwAzgfwfktlwhUZY1c5iUFCECKgoFBlS+4s7etbPqze22+83sRwOn25NfMSBmxeFw/8BLArwO+TMGdu5W4jj+VzeN6ZglmXqpGAnCrDoHzBkRyy1nfb7GJb6CGvTUktOjLo5hkNRUytnwcqRjzARwmqhpNEi26V+Vs2IdC2qS0fTvyW9d73qi24YscWXZkfnT8M4HUj+SrzYutH4h2c/DkHxyyJwBAD5jnxHHh+1qmyOZp8y4Lfnd1csWdu35awm5m3Mf5SwKmRAEQkinkdFM3mTGUangCHLoFWBiuHN7LLrdE2673vJev19P68vy05hlO1PreGZCLp5PrnHKo2h+Q7BNkOBWaFCMyEc9LxnCIEolDrn3MqFP373Oqz1npvuy3aElPmOMDrlOTz1i8FICHnCfjqIV87WG5hsNKyEcff07Pe/16wGdu18nl7+m/wZ+QWPGkkmM3Zeb+PxHOYWj7CLohG0mVZDhRNtv4FHInZ0mlfU7zYWvdtN78z8QFcyNDjAEppaIIrhBSwGCLIXcvmAuBTxtgfXjiysX7pSOKe+oWswPHkJ3yejLrs4v09ekka7wu3j0HcjeTmEC0EIY/pem3GkWCzDoW8CL6j4G1OdFjrviPmd0Ty5m1KesGVEQGNnA/g0eoNAjCDvxcnN0WSG1t2Z38044i85ZeRJ5tf/TWvLXkV+3pf6yagm0bi0VPOOdHlG619xqHAjF0lUMsn4DEvl2V0jSNJLR/Jn7MpbNUNuC3s23cs8r+ZzTcrfx/ACFTMRvH9AYb7N2a1bhYPGCJYcKsMJ0UCbZmXVz+Y+HVrPW8VCxxTjs47Uz9cdgIFavPY3ztM/b1o9TMIIlaCHxPZNgWm7QgVZmwCdkWbsSls1qGyWZfKVnBvpj37yoo9+aD1Ge6o+Z0pH74mxQNBGtYYw0HR8mkiA2MD8yxhzt42viUKRYQ/yepvTf+t13ObV7S22fB3gBc9ycHlw5uw1AIwY0+wWbuCpGOfr83ZeV9P5JtaOJLNwYmeFsfTzQpMNSt4rM3YVYbkzzQrlK7gzqu2zZ/gm1LW57jjFvAoH8Ux6LyDhoE3zgfIaUx9RJDUNzjSJke+mKHxBQ0+OsCJIp879fXZ4z/4RWt9O9Em6l47NN+U+Qau6s250kgyQ9JmiTBVm7UnhVs3kY8kC3DyxbEgniOuTQvSZ0hMaVhxASzYMt9ddcaKrM9xV2zZuX7A50xuLDjTsECBoNwfIEcCYlSQQz5/D156AbGsyee03SoBPUHgSOoL1vp2mvna1KfmHKmYzw4waYtr03YkC1usyrD1TusuHFs3b+E6eAuH6WbVQrwCU7aENt2cYNONCYbnsEtZdjJYcmQXJpt30P4KALh/0Zb4B79bo92tfGMD7msTsYBpaEh9Pr7k4JFdQRIWKC+FgOva/HUpnC94BpeRW1Kr1jp3gi06f/wef1v6ynka3m3CtJ2IYkjalCBeEj2lk24qky5eT1WYalJgsikhXT+baU6wmSZFm2tIb3qbsv/DV6e0WJ9jR5jPpgQwDqD5AAeBL2vKlS1Ll4CkEyhGwNiAxwdibVusIPJlZAwMfa3Ju/I28s+yaUe0ZbYp/X1cDJvFoE60+KlmhU01JzQkXEczEiqhEMkynTTBOE5QHoU0Y0tqXkd6a84Z3dmLZ8su9akrrcauFhQBzmx5HVwE+qSQCAS9blUscEjipRCkJ8CYAOcIMKZIaZeOASwdSd2dsa7FZu2JzllbSlt0aEgWtXrp7nVydQEkiFDZqiXBk40KTDZimoCJpgRMYCqAZVwA6E1QVCqbsidDM470lVlbtMb6PDvC/Eci755vVF5adQLM21XmRXBPwLc44+QQQS5zogDMLd8Muc0pqZFHoaXkLOCPIs05Y39orftOme/IerG/NftN3HY1bUvClC2OrZ1NNSV4q7+hD+epFACHJF6BCYFxE/kc6A2wO1DZZKPCJhribKJJBa8dYLo5veV1pWdWnryNu35v1bwNa+8PuLP/F4lCESxgLODA9wZS4HUI8vm4WF/WlB5BjhTkkqe+FQpnFoUIvA78sSUNFtqUj1rrvt224FQ+OmfLhJY9ADNOhQI9JB5bqd5vi1ZuxmTzTYhvUGCywSBfYqIhAeMNCmGiUaXzXAAJwngjCi4FfhfAZEP2e+OV8Sbrc951W35YKQu4MsEATn2SALgIDAEIkAfQ+3xBPF/n1tfAaTo5hddjPEHj6QXXJiy3bbKFtuQT1rpvh+H++nl7cgWJ99o3YLI5TsMxjPKnmoXLR3KJcO66pauXrp3ynEwin0DkCwEQ8ZJ8c16HNtGgsIlGhY03KGy8Ps5m6jUYr0tnpu3qU9Znvuu26Ag1BxzZJA5ZcKkTRcBnwohMg1yaIOKTRHy929jowEWC4J8Rs2g4jcoW3QwWXBupWVfcbq17O23laMrtc2f/2e9Al49jde7upxE2DPYUNtkouwAK/giTTQrD2ADP8fOSvLg23pAgjDUkYKxBISDhY/Uc4wQsx/McUghj+Nn6OBurT7Cx+jibasyCzwkwbY9/0vrsd92WPOHjK87spl/sdhXQ+B42CS4EucmBE29e/pQbH3DePAm4gjbnTLIZh8IW7Ay8zmzY64nelu1P041q+4I7y5ZbASdoOOk4Jkeiidg4Jx6JvhmQ+EbsHlQCtuBxdOP1cTZejykncaw+LsjH9GYwhCBFggJAT8C9QgrmmwDjjf9q/Rvuui25Yr+z6t4C3DgqRYALIVIAknBOOl8Zy1kDz1keRQHQ0inNhWMfvOjCOYLsNd+R7VsGDTiVSm9L6qWLDgBfI8CyAwDff/Djb/vYDCxiagdYshvHi3aBZtN5vI8DYL4RYLouCxN1KkzUJRhivC7GxupibLQupiHZo3WImEgTRorn6DzmUQAKntPG6hTyBhMNKZizM5h1xo5b/567bovO8CdWHLhVKUN712gThFPV5FKoeTlUJ1vmaSVMCgEFgH8ojrmTfNhlV5iflqKzP5w/EvxXL4hc9bz2vhV7fH65bev5OXv66mS1cnmmNnnZ50xfXXCon56pV69M18SvzDbEPz3bkPj0dH386lxj4spsk3p1piHx6dkGlTBdn7iK12IeVwTnm9U/G68Kf2usMvqDqfrE5pINYLaWwVhNTBuv5R5hrC7BJOkjQgRjdCzBRTCSW6aN1sVJRNONmzBRk1ybql1/wPp33XVbcMTa8ff4eEDH+/JZu0K7YBA569+CdGN5VILPpc/aknLRhE3bk1wEODfuzPz9tCf6q9a634z13tf7c9ay7TR8Y3ehKVEy35z848lK5aX5OoDphgyM1yXYWC0izkZq4yAhiUbSR0gYxjkDMTZSF2ejtTE2Vw/YVXzRWu+OML9HGcEfQsBVMVwhw5kzFAGRLYg3VshyV8lwWdS8WMJXzAhsCqNxm8KWnDhHkPmby0e1d1rr3qk235D4L15bWp1rZDBSE2UjNdgdxLknsBB9jhCzgJejAEZqE2ykVtHmbYALSHdkhPSmbcEWXTzvwKBKioCGU7jUaVoKzV0V44slCZxnp1k1fT69OSlSEY03Kwz3JHidma/2er7589a6d6otOmN1UzXJaxPVG0ACqCEvoJEARKtHsocRNYgo5c0CGK6JacM1MTZcG2eT9Vt4n3/s9cDO/A68zclnhQjYLC520BSqaiycSNJzFko4+ZM2nvKFFRWmcPEEx+I4ZYrewKYyXDHzOtN3fnPkv8LGyq/bJqrSG2O1SW20JkaewGj5kvwoDAmgEM4JkCiqEVGGIhiqjWpzzQCzjtSHrfXsCMM3hH329JfOO/nwioZYvBXjurdYJJGLJnIWLQ4TzYgEzawZs2z6ogqtmQtPoGHUPteU8Vnr3sk23hAdmq8HOFfFu4JztTGNCP4ZAiBPgKiOwZCE8AIzjQDjNfFvWevYMXbhP8M7fPbkX63iBAuOpWmKkyZTiFRJtJw/pxk1RHOcl1tW16b5bBx5App0aUpo/mYAb1Py9v1a1jbbojP2ntHyaGi0Ooktmw1Xx5hBsiBdCEEXQ3UEhqplnjwBG66Os3PVCozV0NzFzt1gi2vp3ob0/0aipppj+gxbDuEmkBdokgKI03HOEitfdNH0GbgmRcMxvLcpc8Za9061c+WRlekaQGIZoSaq6SIwtfoc8qujMEhl5AE0EkFVjM00AIzUx9qtdewom2x+9aHFxsz/wanWqaacmTUim5MviBfH5BWEJ8gRgE3MvzcmNC6ABJtqSAHe2+dK/7617p1oo5Wx35msYjBQGda4CMwCMLoATr4UABEPwzUYDMa5F6iKscm6LYwhvmGtY8fZvDN+YKEpfW3RriGZXACNuPwp3T8XgBSE7gGkCOSSq1xr5+vsGk7DTjZgcJgGbzOD6ZrY7fv1zG2yocpw+VB5jA1URmGwKswFwAM8gt7iTXlOvhBAdRwFQQIYqU3CudpEeLI09mvWenacLdqiNYuObMxrYzDRGGMTKAAhAkMIQgwm8nNh2l3DV940Wk9vSLCp+gxMV2c3Z2vSO2+q1GQTB15732B5OHyuWoXByjAbqoowTn4MhqqiOgarIjCIeeEBuEj0YJB3A9VxGKnOwEj17V0w2zabbY545uszqdmmDeACICFgn04ESwHo5OtdgfQEojvI2WaV0FAAE/UJNtuwCd7GraTXsXN/yhY3eg5XRF4ZrckgwWywKsKIaJ14iwCqojBcZQhguIq6AOoGhipjbLoW44noW+eX3Kdqw4/NN2W3Zm0ZoF0w5AXiGidcBoE8HuCiEHkaNlq8AMYDtPaOXQpftp23MfC1bEYDrck6a907wcYrr71zqCL643OVKRisjLDByigC8wIWIVRGhDjQQ3ABUL6SdwOzODVcqwxY69nRtuhUPrLQxGC6KY3kogBuLgJdCFwAXARyI4ZpMwZtr+LDQxwm+vAXTewb1yfqEoesdd9tmzgA7xssj4cHKxIwUBFmgxVRNlARBYwJBioMEeTCJILKGAxWcgEMVeKmEYCR6ujdng+B+60l/z+baYp9ZNG2mZpqVrWJphibaIpxAeBkkN7qDU9gHJuHjnjM99ZxEai0wRKnjL02XJ7d+NGKLXX7flf/FmyoPHiovyy6NVARIwEMVERIAIMoApHyfISOdUhh0HkpgBibrAEYLAnd3V9mw3n5yfq1wKwr85djjthfjNlinx93xZ8bdyaujNmiFydsseVpp+qda1Vn5tqU8UmHMjTjSnRP2uKvTzenDAGY5wJwDsDcHSAajZHCBOWNAFJ2DegFcLcOegJc3593pL837YkWWJ/5bll/SfADYxVb0F8Z0forIqy/IqKZiZdCQPRXRAR4fqA8ylERQxGQ9xirZDBwKPxn1nruuM00h34P/1XbIk3RAsw34/4AfPUL/xso3zThdwMst+DvBvENFDjXT+Q3xxE62WYPwPN8G7U81nfYWgRAwSF6ArFugN0L/szdrC3xZevz3i0bLolNTFYDkork6wKwQpLeV26gX6CvjITABsojbKxyCwZLw89Z67krNlUf+TLulBnH6L4hRgRM2/jeOkz5XjoxD4B5JF72/0imCPommmIwSZAiMPbSyy3VfCOmAO2xT8AUL9NwOxdu7ZqzZ8DblN2aa9wZv0zSex/83GB55J+GK7NILusvJ0B/eVQnF12/LCPiyxBhgQj0lfK0v4x/fqJag6HyyAVrXXfFZqrjxTM1yfRUQxLddc5+On0CqCkukCC3b5BvngwyQAJoxFbP05yXK6QApIfAySFR51Sjoq3Yaa1gx/z79b6SiGuoPANny6NaX3mEEZBUSbSplVNLL4/A2bJwLkqxLEoCQC+A3mSoMjZmreuu2Ux9fHCpCYQA4jQ0MxMmSTSIk608xt17U0xAunsT6LwUg7yn6CL4nn19Y2fAATBbk/i09fnupvUeWv/z4XIGPWVhdpZDO1vKiZUtvN/U4jnhknSRp/OGACaqAPoqQztG5Pfh+/4zjcqr87ZN3r/zGT/thlZLx6JVS2IF8eONMcIYpQbpZpg/K7oN0foVhmsDi7bUy5ePXtsxO4cGStbdQ2VJ6C2LIulMQG/Z0rUT+UR6GHoRJRGeCggxaNQFlEW00aoNGKxVH7bWd1fN2xz7MG6KHCfi4/S2izVw08nTW3Yu6ZhyYJ7jBgGI+GCcuhH0NnE225SB+eaN5GJ9uNz6XHfLevPhHf0l0X8aKk9Dd2mI9ZSEWG9JSOOkhkQrFyhB0hEhkVqAAigNY9fBcC5hsDKaGa+5jf9C7lZtqj7+1YUm3MAYYxgUjjXENCJOtHbZgo3WLQUgCY/hZ2GsIX4DxuvjMN7AuwEU2biYTJpsVDXc5j1VE/9P1ue5mzZQFr06Wg7QXbrOekqChN6SICe5FMGJlST3HOLg+RD0YCqA1/aUhlhfaZidK8/AYFns5Q/txJ/on21MlE7XpjYmGlQaFXAYZPOWbkC2dvQURLIknPbLxwjyRQopABTIeIPoZpriDPcGzDamFqzPcjetvyw6P1YN0FMW0roPBVk3FwAQDokUhYCkS8IPhjmEELqxjEB5rbsEvUiYjZUC9B2I+6117hibrg2fw4AQSRojLxBHiJZN5BHksd7iiWxJunyJgudJBLifHsvxvvVRNtYQZQs2gJmm1Iv+T8Dt+0dKb8KGqhO/frYk/rlzZQC9ZRGtqzTESAAHgxonE8FF0E2pLEMBhKCbyMc0BN0Hg9AtyroOBbWuQyHWcyisjZYyGD6kPm6te8eYv+61X56qTbwy27gJo0hUfZSN1kc1atENAjrZUcKICbLlj5AIeJ6/VRODkTq8D7/ndNMGzDSkw17b63e9L3yu9OVf6C+Jf7y/PPHjcxUA3SW8xXaXhBm1Xp1UCS6AroMhQu45Dnmu61AIOg8FWeehEOs7lIS+4tjruLhkfYYdZVNVsQ8v1AOM1ke00booQ4zUGeQKMnXyzwlIASD5+BaNGefqotoIf92Kjdep2nyDBjMN8bvWEkbt2q8MVsSbByvV3p6S6PcGSjahrzwJ3aVh1lUSZthiu0vCGrXggwgTqQeC0Clx0CQEkXYekAhD58GQ1nEwyDoPBNm5AwC9RbEp67PsSJuqiX5tHvev1UWkAJBAQWhUvCbF8+cISLIEP59LPt2DBLDYCDBZo9zyr2d3lf7kT89WxL/WUxb8Sm956CvdpaEv9ZSHvtRVGnq+81Dwy+0H154nlFx/vqss+HxXWej59pK15ztLQl/qKY1+tbM08lJnSeS1s2UJOFcOcLYkyd00Ek/kY8sPa90l2H+jC5fEmog3oeuAFAZHZ7EQQHEIOg4EWWfxOus+EIa+fYnN3vydt9p5U5usDVdM1SW38B340Xp8zSmKW6L1t190cmtx7xu+FGHskcM8XYPXcgGwc7VRdq4mQmvho1XqX1rre6PWW7r2waHKTRis2IKB8iwMVWzAUNUmYaBiA/rKNqCvNAt9ZVk6HqzaoLS/bAMGSjdhoBTPZ6C3RJHksq6DIdZ5MEhpFxJPgRsP5BBE/sEgkgkdB9YN8osx5WTTOXlcHIIuJL84qGHL7ywOsnOHMPgL390VwDdrU3WRaWyt6LpHiEB8ySHKX34Q++L1DZG15v3xXAD0dkxtVCPyayNsqi4L49Wp18ZK1fdb63oj1l8SLusrURKDlUnoKcXIPMT4DF2Eoeum8TqlYZ6W8bLuQ7xVE8EHMeX5zgMcVH4gqPGWHIZugiRekKvDIFsSTmXymIDHIWjfj+SHWG9xDPr2K9neA8G3RuuXtmIP/spkrfKTydosDNfgPjjaFi12xOa+FGHsjOWgzZI1UQ1Fg+IZr1Nhpn5Dm666tZ9T89fBu4cqEz84V7mBQRoFaEhyT2lY6ykNCWDegAjmtO6DIQ374q6DmA9rXQfDWueBkEAQy3k/Ty5cprIfR2LXBQzidew3yO/YL473h6C9OMQ6UAD7gmykGKBvf2RH/ZraG7bx2vCHZ2s03O6soQDwVSd9P5y+A9YgX+6MHayOanzzZITepkFPMlOTuOWfVOs+EPkyjs3Ploc5+SURRlOuJRE+2ULAKVg+DauPz9GVH4xAF7n0CPQcilALNxNs7sO5exf9t5XsHCDRQWgnsuWxIH9fUMPW314cZH37s3C2MPHK6EFt5/141Bu10fLgV6e4CNhQVZQNVEW0waoY7YEjIOHmPB3za1EE+Hr0RI1yy78s2n0oMjF0AJBE0eojOKmi8YkYLgBDBDzfXSL7b+HSD6EIIiKiD+vk64SbBCH7dyS6vXidEyzcfjuSTu6diDZAxyE4sz+ote8LMkTXvigM7tuE3kLliPVvekvZSNnrJWOVyexwlSI2RUb4HnncE0fgu2ERA4hqFAjunI2wyVoGo1XJ748evLWfTxusCD1Fs3IlUQ3H0jQ2Lwlr1JL1YE22dmMSRkbu1NqFCDj5XAS5pMtATpTr7lyKwEhRAGf2BeG0AObP7FuHM0VBOFO0rp1B8otDrH1fSBssBOjNi3VZ/6a3pJ2rCJ+bqQTc/CD3xJEIkHyCJL8qog3wbdNspCoF4xXZ9ESleks/onhqz7XGngOJbH+FAhTU0fAsKKJ0IQBT0NZNfTeOy3mr1vt2M4hkDh68SQg3TkRTAGeIAFs3ufsgtnAi/HSRIF2I4HTRuna6cJ21FwVZR1GIjRwAOJsfv/vbvrbLLldee+dwGc6UZaC/Isx3xlREtP5KuQ+OUk0XSGVMm6kGGC9L39L+95km5TfPFid+3LsvjUMwTj7NzBmky8BN9uM8As8dohkBXsQgHsfpMlIX7vwMum9BJrlz6eKReL2lm1p/EYogCKcKg3AKyS9aZ4T8ddafjy1f/cbkHm3n/HD0dthwRfg/TFZSIKb1lUkR8L1wfbQXDsvCtO9tqgpguEy5pR+Thvvuu3+gMvat0WrgEykH+Bhdn5VDIk2TLbK/li4bYYhBuPdiJF6AgjUT0SQAkyvPIdxo7Uj4aTymMiIeThass1MFa+xM0Trr2BfShvYBdD0U//of/vrLb6n/qfCGbbAk/LWRMoYbHBiK4GxZRDvL98IxFACWjZVrMFgS/7vnSuEXrJ9/I9ZRuDYzXAKAs3LdB8NyrM77btl/665bQLhoGYlzYVgieSvpwqXL/tzcss9QasI+JJyTzhHUThats1P56+xU3hprz48Auv3h/ZnPzO5/a/wvhVuykZJrZUMlyc2+sjiJADc69PIxOOWHK9IwUp6O9Zfc2k/E9ZeGPzGwn0F7UUjrEBM1fLzOXXdOn633z0YfjXkuAt7S9X5bgAdxIRPpokUTRCtHggtNIOIF+YVr2snCNXaqcJ2dKgyx04VB1lOQga4H0tD7YKLH+vfckzZQGp6dqMD1chyP890yODPXezCujR4CGClL/HvrZ96I9R1YcwyVqZu9hxLY7zIcS3cUh7ROct03kozDrhuGYmbged29c7LNedm6TxWtEcGcfOzX1+EkEl/AcRJRKPr5wnV2Gt1+/hrrKIjBcDHAYGH2hwMPxI5Z/5571qarXvnVgeLIawMlKdrqJDFaAtBbEB22Xv9G7ET+K+9vL4z8tPdAEodbRH77PpxNM/fTgkzRinP7ahSBGIvrZfIzHHrr5i2ZgESbQS1ekl6wrp3IX2cn8tbYyfx1dqYgxNoLQqyjMAr9+Rp0PRjP9O5VJ0aKIu+2/j33vPUXrz01ehBwexRtmMSdrkOliW9ar3sjhv9araMo9Nc9+7Jwsug6O71vnZ3hAhCE3ghzv21E5th3Gy3ZGKeH4ExRiFo5JxaJF+QXrMEJwnWNY51hYEdpPuaD7FRekJ3cu6517E3AUD5AX36S9e1NX+39zZ2zh/Fu2P19+8N/O3xoE/oPZWDgUGp9pPTW/q9g1/7Q0kAJwKn9a+xU0XV2qgijatFX64RyEjE9XRREd8xd8r4gR1GQnSrg7pmArrqIl2M/jcDzJwvWCBi5Y3oi/zr7VN51dgKRj8eIdcLJvCC05ytwtkCDvgINOh9IXO97QPWey7+1eY17zobLw7bh0g0YKN6A7iLlsPX8G7ET+a//Qc/+TTi9P6id2rfGThZhgLWG5JI71sfahUE4XRjUiEgktAgDsBA7gygKs9MFiBA7nR/irlqck2Wn84MEitol8ta0k3vXtJN5a3C6IATtBVHoyFegMy8L3Xu3oCtPhc49sde689Rne/NTH+nd8xb4VY87bWdLw5/vLwlNWsvfiH0q/yctpwqiSCacKLzOThIwypZ9tIzEqUy08CCR2l4Ygd6iNAwUatBfoMHZgi04m78FfYVb0F/EcbZgA87mCeRvQG9+Fnr2pjnyME1B50MKtO+JQfveUPp03tpPTz64/p1TD4avnnkg/nTvg3H77P7Qu6zPvWsmu1ypvfNW/j3q6fxrBacKomtnihT4ZP419qn8a+xkPrplPQDD/lnj7lq02IIg6yhIQF8BQHe+CmcLEi+fzY/6O/Iif9SRv/7xzrz13+sqDH28q3D94114vGftY2f2XPvYmT1rH8N8x961p04/eO2pMw/+9GPtD13/aNfeyJOdD4SOdTwUah7ISxeefO8/39J6xa69SZvc8+ovnS6IfrezaAM+WYDkU1+sncxfhxP56xSMkRhE9I2uuyM/Dri40lOgxrv2Kv7eh5LN+OKm9d679hawM0Whz/buBzhRuM4+VbAmBLCmfSr/uvbJPAzKkHzso4OsM0+FAWzxe9W1vjxleLxgZ/14xK69STu1d639bDHAyaIQDbkw2kYBIIj8vdex5WudeSnoywPo3au+2p+f6uwtUn7Deq9de4vZ6b2v/daZB1U4kR+Bk4UhGmPjsIsEkLeG5Gud+Sr0F25B1x7l+x0PKU+PFMHbb5LlXrT+veGyjnxFOZ2nwJ/uxTE3jstD1MefwBafn4aefAade+L/qz8//vEL+a+8w3qPXXuL2umif3l31/7YP/cUb8KJgiD71F5s7TjREoLuog3oyc9C50Pxv+3Zk/qPz9335kcUu7bD7en3v/YX3fkMThaiyw9hy4fuPRvQ/lASOvLUb3TvSf629TO7do/YqaLgUEceg6cfus5O7A3D2X0AvfvT0LNH+WLnQ9Fb2iK+a28Ra89f/0hP0SZ0FCvQtXcLTrw/yroK1M/1Fadc1mt37R6z0/vXa7qLkgxXDLv3qamOvOT5jgeitdbrdu0etN5S9f2dBWr4bNFGfKBYneotzBywXrNr96hdejD+3om8+GcGCjLzT+f9aOf9s8Rdu73mLXg9f/7B9d0Wv2u7tmu7tmu7tmu7tmu7tmu79qbt/wGlAW/HEsBkTAAAAABJRU5ErkJggg==" alt="Baliz">
-      Baliz&nbsp;<span class="muted" style="font-weight:600">Painel</span>
-    </div>
-    <div class="nav-links">
-      <a href="#recursos">Recursos</a>
+    <div class="brand"><img src="logo.png" alt="Baliz"> Baliz <span class="mut" style="font-weight:550">Painel</span></div>
+    <div class="links">
+      <a href="#desempenho">Desempenho</a>
       <a href="#overlay">Overlay</a>
-      <a href="#como">Como funciona</a>
-      <a href="#preco">Preço</a>
+      <a href="#comparativo">Comparativo</a>
+      <a href="#preco">Planos</a>
       <a href="#faq">FAQ</a>
-      <a href="#comprar" class="btn btn-primary btn-sm" style="height:42px;padding:0 18px;font-size:14px;border-radius:10px">Garantir agora</a>
+      <a href="#preco" class="btn btn-fill" style="height:42px;padding:0 20px;font-size:13.5px;border-radius:10px">Começar</a>
     </div>
   </div>
 </nav>
 
 <!-- HERO -->
 <header class="hero">
-  <div class="spot"></div>
   <div class="wrap">
-    <div class="badge reveal"><span class="dot"></span> Feito sob medida para <b style="color:var(--text);margin:0 3px">Valorant</b> · Windows 10 e 11</div>
-    <h1 class="reveal">Seu PC no <span class="grad">limite máximo</span>.<br>Seu inimigo sem chance.</h1>
-    <p class="lead reveal">Mais FPS, frametime travado no liso, input lag no chão e a rede afiada — tudo aplicado e <b style="color:var(--text)">verificado</b> no seu Windows, em 1 clique. E ainda mostra o rank de <b style="color:var(--text)">todo mundo</b> da partida na sua tela.</p>
-    <div class="hero-actions reveal">
-      <a href="#comprar" class="btn btn-primary btn-lg magnetic">Quero meu PC voando
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-      <a href="#recursos" class="btn btn-ghost btn-lg">Ver tudo que faz</a>
+    <div class="tagline rv"><span class="d"></span> Aplicativo nativo para Windows 10 e 11 · Feito para Valorant</div>
+    <h1 class="rv">O seu PC no máximo.<br>A partida <span class="grad">inteira</span> na sua tela.</h1>
+    <p class="lead rv">O Baliz Painel afina o seu Windows para <b>mais FPS e estabilidade</b>, derruba o input lag e mostra o <b>rank, KD e HS de todos</b> da partida no overlay. Tudo em um app leve, nativo e <b>100% reversível</b> — sem mágica, com cada ajuste explicado.</p>
+    <div class="cta-row rv">
+      <a href="#preco" class="btn btn-fill btn-lg">Começar agora
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <a href="#desempenho" class="btn btn-line btn-lg">Ver como funciona</a>
     </div>
-    <div class="trust reveal">
-      <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Reversível com 1 clique</span>
-      <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Ponto de restauração automático</span>
-      <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> NVIDIA · AMD · Intel</span>
+    <div class="micro rv">Sem instalar drivers estranhos · Cria ponto de restauração antes de mexer</div>
+
+    <div class="trust rv">
+      <span class="t"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Reversível com 1 clique</span>
+      <span class="t"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Nativo (WebView2), ~40 MB de RAM</span>
+      <span class="t"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> NVIDIA · AMD · Intel</span>
     </div>
 
-    <!-- APP MOCKUP -->
-    <div class="shot reveal" id="shot">
-      <div class="win">
-        <div class="titlebar"><div class="dots"><i></i><i></i><i></i></div><span class="tb-title">Baliz Painel</span></div>
+    <!-- DEVICE -->
+    <div class="device rv-s" id="device">
+      <div class="frame" id="frame">
+        <div class="topbar"><div class="traffic"><i></i><i></i><i></i></div><span class="tt">Baliz Painel</span></div>
         <div class="app">
-          <div class="side">
+          <div class="rail">
             <div class="it on"><b></b> Início</div>
             <div class="it"><b></b> Computador</div>
             <div class="it"><b></b> Periféricos</div>
@@ -327,26 +379,26 @@
             <div class="it"><b></b> Pro Mode</div>
             <div class="it"><b></b> Comunidade</div>
           </div>
-          <div class="body">
-            <div class="scorebar">
-              <div class="ring"><span>86%</span></div>
-              <div class="sc-txt">
+          <div class="screen">
+            <div class="hud">
+              <div class="gauge"><span>86%</span></div>
+              <div class="hud-t">
                 <b>Seu PC está otimizado</b>
                 <p>34 de 39 otimizações ativas · Ryzen 5 · RTX 3060 · 16GB</p>
               </div>
             </div>
-            <div class="dash">
-              <div class="monitor">
-                <div class="mon-head"><span class="lab">MONITOR AO VIVO</span><span class="state bad" id="monState">SEM BALIZ</span></div>
-                <div class="fps"><span class="fps-num" id="fpsNum">112</span><span class="fps-u">FPS</span></div>
-                <div class="ft-bars" id="ftBars"></div>
-                <div class="mon-foot"><span class="pulse"></span><span id="monFoot">frametime instável · picos de 22ms</span></div>
+            <div class="row2">
+              <div class="mon">
+                <div class="mon-top"><span class="l">MONITOR AO VIVO</span><span class="state bad" id="mState">SEM BALIZ</span></div>
+                <div class="fps"><span class="fps-n" id="fpsN">112</span><span class="fps-u">FPS</span></div>
+                <div class="bars" id="bars"></div>
+                <div class="mon-f"><span class="p"></span><span id="mFoot">frametime instável · picos de 22 ms</span></div>
               </div>
-              <div class="togs">
-                <div class="mc"><div class="l"><b>Plano Máximo</b><p>CPU no boost</p></div><div class="tog"></div></div>
-                <div class="mc"><div class="l"><b>Núcleos ativos</b><p>frametime liso</p></div><div class="tog"></div></div>
-                <div class="mc"><div class="l"><b>Limpeza de RAM</b><p>sem quedas</p></div><div class="tog"></div></div>
-                <div class="mc"><div class="l"><b>Mouse 1:1</b><p>sem aceleração</p></div><div class="tog"></div></div>
+              <div class="sws">
+                <div class="sw"><div class="l"><b>Plano Máximo</b><p>CPU no boost</p></div><div class="tg"></div></div>
+                <div class="sw"><div class="l"><b>Núcleos ativos</b><p>frametime liso</p></div><div class="tg"></div></div>
+                <div class="sw"><div class="l"><b>Limpeza de RAM</b><p>sem quedas</p></div><div class="tg"></div></div>
+                <div class="sw"><div class="l"><b>Mouse 1:1</b><p>sem aceleração</p></div><div class="tg"></div></div>
               </div>
             </div>
           </div>
@@ -356,152 +408,237 @@
   </div>
 </header>
 
-<!-- STATS BAND -->
-<section style="padding:30px 0 10px">
+<!-- STAT STRIP -->
+<section style="padding:40px 0 16px">
   <div class="wrap">
-    <div class="stats">
-      <div class="stat reveal"><div class="n" data-count="40" data-suffix="+">0</div><div class="t">otimizações reais</div></div>
-      <div class="stat reveal"><div class="n" data-count="10">0</div><div class="t">jogadores lidos ao vivo</div></div>
-      <div class="stat reveal"><div class="n" data-count="100" data-suffix="%">0</div><div class="t">reversível, sem pegadinha</div></div>
-      <div class="stat reveal"><div class="n" data-count="1" data-prefix="<">0</div><div class="t">clique pra otimizar tudo</div></div>
+    <div class="strip rv-s">
+      <div class="st"><div class="n" data-count="40" data-suffix="+">0</div><div class="t">otimizações reais</div></div>
+      <div class="st"><div class="n" data-count="10">0</div><div class="t">jogadores lidos ao vivo</div></div>
+      <div class="st"><div class="n" data-count="3">0</div><div class="t">apps em um (otimizar · overlay · stats)</div></div>
+      <div class="st"><div class="n" data-count="100" data-suffix="%">0</div><div class="t">reversível, com backup antes</div></div>
     </div>
   </div>
 </section>
 
-<!-- PILARES -->
-<section id="recursos">
+<!-- FEATURE 1: DESEMPENHO -->
+<section id="desempenho">
   <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="eyebrow">5 frentes de ataque</div>
-      <h2 style="margin-top:14px">Tudo que separa você do próximo elo</h2>
-      <p>O Baliz Painel não joga um tweak aleatório e reza. Ele ataca os <b style="color:var(--text)">cinco gargalos reais</b> de quem joga competitivo — e te mostra o que mudou.</p>
+    <div class="fr">
+      <div class="fr-text rv">
+        <div class="eyebrow">Desempenho</div>
+        <h3>Otimização que você entende — e desfaz quando quiser</h3>
+        <p>O painel lê o seu hardware (CPU, GPU, RAM, disco, Windows) e aplica o conjunto certo de ajustes para <b>liberar FPS e estabilizar o frametime</b>. Cada item é uma configuração real do Windows ou do driver — nada de "limpeza mágica" — e tudo fica explicado em português.</p>
+        <ul class="mini">
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Mais de 40 ajustes: energia, núcleos, agendamento de GPU, prioridade, rede e memória</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Monitor de FPS ao vivo — FPS, frametime e 1% low, medidos pela telemetria do Windows (a mesma técnica do PresentMon)</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Modo Competitivo: um clique deixa o PC em modo guerra e reverte ao sair</li>
+        </ul>
+        <div class="note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg> <span>Antes de qualquer mudança, o painel cria um <b style="color:var(--ink)">ponto de restauração</b> do Windows. Se quiser, reverte tudo num clique.</span></div>
+      </div>
+      <div class="fr-vis rv-s">
+        <div class="vis" style="padding:0;overflow:hidden">
+          <div style="padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:13px;background:linear-gradient(135deg,rgba(124,58,237,.12),transparent)">
+            <div class="gauge" style="width:54px;height:54px;font-size:15px"><span>86%</span></div>
+            <div><b style="font-size:14px;font-weight:750">Computador · otimizado</b><p style="font-size:11.5px;color:var(--mut);margin-top:3px">34 de 39 ativas</p></div>
+          </div>
+          <div style="padding:14px;display:flex;flex-direction:column;gap:9px">
+            <div class="sw"><div class="l"><b>Plano de energia máximo</b><p>CPU sempre no boost</p></div><div class="tg"></div></div>
+            <div class="sw"><div class="l"><b>Desestacionar núcleos</b><p>frametime mais liso</p></div><div class="tg"></div></div>
+            <div class="sw"><div class="l"><b>Agendamento de GPU (HAGS)</b><p>menos latência de render</p></div><div class="tg"></div></div>
+            <div class="sw"><div class="l"><b>Limpeza de RAM automática</b><p>sem quedas após horas</p></div><div class="tg"></div></div>
+            <div class="sw"><div class="l"><b>Prioridade para o Valorant</b><p>jogo na frente do resto</p></div><div class="tg"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURE 2: OVERLAY -->
+    <div class="fr rev" id="overlay">
+      <div class="fr-text rv">
+        <div class="eyebrow">Overlay ao vivo · Beta</div>
+        <h3>O rank de todo mundo da partida, no TAB</h3>
+        <p>O overlay aparece sobre o jogo quando você quer e mostra os <b>10 jogadores</b> da partida — seu time e os inimigos — com <b>rank, KD, headshot% e winrate</b>. Ele lê o cliente do seu próprio Valorant, sem depender de um site externo, então a informação chega rápida.</p>
+        <ul class="mini">
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Descubra o smurf do time inimigo antes do primeiro round</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Leve e discreto — aparece e some, sem poluir a tela</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Aba de estatísticas completa: histórico, agentes e mapas</li>
+        </ul>
+        <div class="note"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> <span>Recurso em <b style="color:var(--ink)">Beta</b>: depende do cliente do Valorant e pode mudar se a Riot alterar o jogo. As otimizações de PC funcionam sempre, independente disso.</span></div>
+      </div>
+      <div class="fr-vis rv-s">
+        <div class="vis">
+          <div class="vis-h"><b>Partida ao vivo</b><span class="tab">SEGURANDO TAB</span></div>
+          <div class="team">SEU TIME</div>
+          <div class="ov-cols"><span></span><span>JOGADOR</span><span>RANK</span><span>KD</span><span>HS</span></div>
+          <div class="pr me"><img class="av" src="https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/displayicon.png" alt="" loading="lazy"><span class="nm">Você</span><span class="rk" style="color:#f6c44a"><img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/25/smallicon.png" alt="">Imortal 2</span><span class="kd" style="color:var(--grn)">1.34</span><span class="kd">28%</span></div>
+          <div class="pr"><img class="av" src="https://media.valorant-api.com/agents/320b2a48-4d9b-a075-30f1-1f93a9b638fa/displayicon.png" alt="" loading="lazy"><span class="nm">duomate</span><span class="rk" style="color:#67e8f9"><img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/20/smallicon.png" alt="">Diamante 3</span><span class="kd" style="color:var(--grn)">1.21</span><span class="kd">24%</span></div>
+          <div class="pr"><img class="av" src="https://media.valorant-api.com/agents/eb93336a-449b-9c1b-0a54-a891f7921d69/displayicon.png" alt="" loading="lazy"><span class="nm">flexpicker</span><span class="rk" style="color:#fcd34d"><img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/13/smallicon.png" alt="">Ouro 2</span><span class="kd" style="color:var(--amb)">0.94</span><span class="kd">17%</span></div>
+          <div class="pr"><img class="av" src="https://media.valorant-api.com/agents/1e58de9c-4950-5125-93e9-a0aee9f98746/displayicon.png" alt="" loading="lazy"><span class="nm">iceage</span><span class="rk" style="color:#67e8f9"><img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/18/smallicon.png" alt="">Diamante 1</span><span class="kd" style="color:var(--grn)">1.08</span><span class="kd">21%</span></div>
+          <div class="team" style="color:var(--red);padding-top:11px">INIMIGOS</div>
+          <div class="pr"><img class="av" src="https://media.valorant-api.com/agents/a3bfb853-43b2-7238-a4f1-ad90e9e46bcc/displayicon.png" alt="" loading="lazy"><span class="nm">smurf_alert</span><span class="rk" style="color:#f0abfc"><img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/27/smallicon.png" alt="">Radiante</span><span class="kd" style="color:#f87171">1.62</span><span class="kd">33%</span></div>
+          <div class="pr"><img class="av" src="https://media.valorant-api.com/agents/569fdd95-4d10-43ab-ca70-79becc718b46/displayicon.png" alt="" loading="lazy"><span class="nm">tarkov</span><span class="rk" style="color:#fcd34d"><img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/14/smallicon.png" alt="">Ouro 3</span><span class="kd" style="color:var(--amb)">0.91</span><span class="kd">15%</span></div>
+          <div class="pr"><img class="av" src="https://media.valorant-api.com/agents/22697a3d-45bf-8dd7-4fec-84a9e28c69d7/displayicon.png" alt="" loading="lazy"><span class="nm">yumi</span><span class="rk" style="color:#67e8f9"><img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/19/smallicon.png" alt="">Diamante 2</span><span class="kd" style="color:var(--grn)">1.15</span><span class="kd">23%</span></div>
+          <div class="pr"><img class="av" src="https://media.valorant-api.com/agents/8e253930-4c05-31dd-1b6c-968525494517/displayicon.png" alt="" loading="lazy"><span class="nm">lowelo</span><span class="rk" style="color:#cbd5e1"><img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/10/smallicon.png" alt="">Prata 2</span><span class="kd" style="color:#f87171">0.78</span><span class="kd">12%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURE 3: DIAGNÓSTICO -->
+    <div class="fr">
+      <div class="fr-text rv">
+        <div class="eyebrow">Diagnóstico</div>
+        <h3>Ele te explica o seu PC — e onde tem FPS sobrando</h3>
+        <p>Em vez de prometer milagre, o Baliz <b>mede e mostra</b>. Lê CPU, GPU e RAM, libera o boost máximo com segurança e detecta o ganho mais comum que fica na mesa: o <b>XMP/EXPO desligado</b> na BIOS, que sozinho pode render FPS de graça.</p>
+        <ul class="mini">
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Enquadramento honesto: o que dá pra ganhar com segurança, e o que não dá</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Guia passo a passo de XMP/EXPO para a sua placa</li>
+          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Editor de gráficos do Valorant com preset competitivo de verdade</li>
+        </ul>
+      </div>
+      <div class="fr-vis rv-s">
+        <div class="vis">
+          <div class="vis-h"><b>Overclock &amp; Desempenho</b><span class="tab" style="color:var(--cy);background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.25)">DIAGNÓSTICO</span></div>
+          <div class="diag">
+            <div class="dg"><div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/></svg></div><div class="info"><b>CPU · Ryzen 5 5600</b><p>Boost liberado e estável</p></div><span class="badge ok">LIBERADO</span></div>
+            <div class="dg"><div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 18v2M18 18v2M7 10h4"/></svg></div><div class="info"><b>GPU · RTX 3060</b><p>Modo de energia no máximo</p></div><span class="badge ok">MÁXIMO</span></div>
+            <div class="dg"><div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 8h20v8H2zM6 8v8M10 8v8M14 8v8M18 8v8"/></svg></div><div class="info"><b>RAM · 16GB @ 2133MHz</b><p>XMP/EXPO desligado — perfil rápido disponível</p></div><span class="badge warn">+FPS</span></div>
+          </div>
+          <div style="margin-top:12px;padding:11px 14px;border-radius:11px;background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);font-size:11.5px;color:#fcd34d;font-weight:600;display:flex;gap:9px;align-items:center">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+            Sua RAM está rodando abaixo do que a placa aguenta. Ligue o XMP/EXPO — o painel te mostra como.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section id="comparativo">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="eyebrow">Comparativo</div>
+      <h2>Baliz Painel vs. o resto</h2>
+      <p>Trackers são craques em stats e overlay. Otimizadores mexem no seu PC. O Baliz faz as <b style="color:var(--ink)">duas coisas</b> — específico pro Valorant, num app só e reversível.</p>
+    </div>
+    <div class="cmp rv-s">
+      <div class="cmp-grid">
+        <!-- header -->
+        <div class="cmp-cell cmp-head"><span>&nbsp;</span></div>
+        <div class="cmp-cell cmp-head baliz"><span class="brand-mini"><img src="logo.png" alt=""> <b>Baliz Painel</b></span><span class="sub">tudo em um, nativo</span></div>
+        <div class="cmp-cell cmp-head">Trackers<span class="sub">Tracker.gg · Overwolf · Blitz</span></div>
+        <div class="cmp-cell cmp-head">Otimizadores<span class="sub">"boosters" genéricos</span></div>
+
+        <!-- rows -->
+        <div class="cmp-cell cmp-feat">Overlay com rank, KD e HS de todos<span>os 10 da partida, no TAB</span></div>
+        <div class="cmp-cell cmp-val"><svg class="ck y" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="cmp-cell cmp-val"><svg class="ck y" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="cmp-cell cmp-val"><svg class="ck n" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+
+        <div class="cmp-cell cmp-feat">Estatísticas detalhadas<span>histórico, agentes e mapas</span></div>
+        <div class="cmp-cell cmp-val"><svg class="ck y" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="cmp-cell cmp-val"><svg class="ck y" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="cmp-cell cmp-val"><svg class="ck n" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+
+        <div class="cmp-cell cmp-feat">Otimização de FPS e sistema<span>energia, núcleos, GPU, rede, RAM</span></div>
+        <div class="cmp-cell cmp-val"><svg class="ck y" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="cmp-cell cmp-val"><svg class="ck n" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+        <div class="cmp-cell cmp-val"><svg class="ck y" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg></div>
+
+        <div class="cmp-cell cmp-feat">Monitor de FPS ao vivo<span>FPS, frametime e 1% low (técnica PresentMon)</span></div>
+        <div class="cmp-cell cmp-val"><svg class="ck y" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="cmp-cell cmp-val"><svg class="ck n" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+        <div class="cmp-cell cmp-val"><svg class="ck n" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+
+        <div class="cmp-cell cmp-feat">Específico para Valorant<span>presets e leitura do próprio jogo</span></div>
+        <div class="cmp-cell cmp-val"><svg class="ck y" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="cmp-cell cmp-val"><svg class="ck y" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="cmp-cell cmp-val"><svg class="ck n" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+
+        <div class="cmp-cell cmp-feat">Tudo reversível + ponto de restauração<span>nada de risco permanente</span></div>
+        <div class="cmp-cell cmp-val"><svg class="ck y" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="cmp-cell cmp-val"><span style="color:var(--dim);font-size:13px">—</span></div>
+        <div class="cmp-cell cmp-val"><svg class="ck n" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+
+        <div class="cmp-cell cmp-feat">Editor de gráficos do Valorant<span>até as opções ocultas</span></div>
+        <div class="cmp-cell cmp-val"><svg class="ck y" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="cmp-cell cmp-val"><svg class="ck n" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+        <div class="cmp-cell cmp-val"><svg class="ck n" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+
+        <div class="cmp-cell cmp-feat">Input lag e mouse (Raw Accel)<span>curva 1:1 sem aceleração</span></div>
+        <div class="cmp-cell cmp-val"><svg class="ck y" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="cmp-cell cmp-val"><svg class="ck n" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+        <div class="cmp-cell cmp-val"><svg class="ck n" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+
+        <div class="cmp-cell cmp-feat">Diagnóstico de overclock + XMP<span>te mostra o FPS de graça</span></div>
+        <div class="cmp-cell cmp-val"><svg class="ck y" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="cmp-cell cmp-val"><svg class="ck n" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+        <div class="cmp-cell cmp-val"><svg class="ck n" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+
+        <div class="cmp-cell cmp-feat">Tudo num app só<span>otimização + overlay + stats juntos</span></div>
+        <div class="cmp-cell cmp-val"><svg class="ck y" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <div class="cmp-cell cmp-val"><svg class="ck n" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+        <div class="cmp-cell cmp-val"><svg class="ck n" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+      </div>
+    </div>
+    <p class="cmp-foot">Comparativo geral baseado nas categorias de ferramentas; recursos de cada produto podem variar. Tracker.gg, Overwolf e Blitz são marcas de seus respectivos donos.</p>
+  </div>
+</section>
+
+<!-- PILLARS -->
+<section>
+  <div class="wrap">
+    <div class="head rv">
+      <div class="eyebrow">Por dentro</div>
+      <h2>A profundidade por trás do desempenho</h2>
+      <p>Cinco frentes que atacam os gargalos reais de quem joga competitivo — explicadas, não escondidas.</p>
     </div>
     <div class="pillars">
-      <div class="pill reveal">
-        <div class="pico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
-        <h3>Mais FPS</h3>
-        <p>Libera a CPU e a GPU do freio do Windows: plano de energia máximo, núcleos sem estacionar, agendamento de GPU, prioridade pro jogo e o editor de gráficos do Valorant com preset competitivo que zera o que rouba quadro.</p>
-        <span class="tag">Ganho real, não placebo</span>
+      <div class="pill rv">
+        <div class="ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+        <h4>Mais FPS</h4>
+        <p>Tira CPU e GPU do freio do Windows: energia máxima, núcleos sem estacionar, agendamento de GPU e prioridade para o jogo.</p>
       </div>
-      <div class="pill reveal">
-        <div class="pico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg></div>
-        <h3>FPS Estável</h3>
-        <p>De que adianta 300 FPS se trava na hora do clutch? Limpeza de RAM e standby, timer de alta precisão, MMCSS e kernel na memória deixam o <b style="color:var(--text)">frametime liso</b> — fim das quedas no meio do round.</p>
-        <span class="tag">Adeus, micro-travadas</span>
+      <div class="pill rv">
+        <div class="ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg></div>
+        <h4>FPS estável</h4>
+        <p>Limpeza de RAM e standby, timer de alta precisão, MMCSS e kernel na memória deixam o <b>frametime liso</b> — fim das quedas no clutch.</p>
       </div>
-      <div class="pill reveal">
-        <div class="pico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 14 3-3 3 3 4-6"/></svg></div>
-        <h3>Menos Input Lag</h3>
-        <p>Mira que responde no mesmo instante: aceleração de mouse fora, MSI mode, prioridade de processo, fullscreen sem atraso e orientação dos ajustes de Reflex no próprio jogo. O clique vira bala.</p>
-        <span class="tag">Resposta instantânea</span>
+      <div class="pill rv">
+        <div class="ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 14 3-3 3 3 4-6"/></svg></div>
+        <h4>Menos input lag</h4>
+        <p>Aceleração de mouse fora, MSI mode, fullscreen sem atraso e a curva do Raw Accel afinada. O clique responde no mesmo instante.</p>
       </div>
-      <div class="pill reveal">
-        <div class="pico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.5a7 7 0 0 1 14 0"/><path d="M2 9a11 11 0 0 1 20 0"/><circle cx="12" cy="18" r="1.5"/></svg></div>
-        <h3>Internet de Elite</h3>
-        <p>Placa de rede sem economia de energia, entrega imediata de pacotes, prioridade de tráfego pro Valorant e DNS rápido. Menos jitter, conexão estável e teste de ping embutido.</p>
-        <span class="tag">Conexão afiada</span>
+      <div class="pill rv">
+        <div class="ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.5a7 7 0 0 1 14 0"/><path d="M2 9a11 11 0 0 1 20 0"/><circle cx="12" cy="18" r="1.5"/></svg></div>
+        <h4>Internet afiada</h4>
+        <p>Placa de rede sem economia de energia, entrega imediata de pacotes, prioridade de tráfego e DNS rápido. Menos jitter, com teste de ping embutido.</p>
       </div>
-      <div class="pill reveal">
-        <div class="pico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/></svg></div>
-        <h3>Overclock Inteligente</h3>
-        <p>Analisa CPU, GPU e RAM e te diz <b style="color:var(--text)">exatamente onde tem FPS sobrando</b>. Libera o boost máximo com segurança e detecta se o XMP/EXPO está desligado — o ganho grátis que 8 em 10 PCs deixam na mesa.</p>
-        <span class="tag">Diagnóstico + ação segura</span>
+      <div class="pill rv">
+        <div class="ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/><path d="M12 8v4l3 2"/></svg></div>
+        <h4>Diagnóstico de hardware</h4>
+        <p>Mede CPU, GPU e RAM, libera o boost seguro e aponta o XMP/EXPO desligado — o ganho grátis que 8 em 10 PCs deixam parado.</p>
       </div>
-      <div class="pill reveal">
-        <div class="pico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
-        <h3>Seguro de verdade</h3>
-        <p>Cada mudança é <b style="color:var(--text)">reversível</b> e o painel cria um ponto de restauração antes de mexer. Reverte tudo num clique. E se um update do Windows desfizer suas otimizações, o painel avisa e reaplica.</p>
-        <span class="tag">Sem medo de testar</span>
+      <div class="pill rv">
+        <div class="ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <h4>Seguro de verdade</h4>
+        <p>Ponto de restauração antes de mexer, tudo reversível num clique e, se um update do Windows desfizer algo, o painel avisa e reaplica.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- OVERLAY SHOWCASE -->
-<section id="overlay" style="padding-top:30px">
-  <div class="wrap">
-    <div class="showcase">
-      <div class="reveal">
-        <div class="eyebrow">Exclusivo Baliz <span style="font-size:10px;font-weight:800;letter-spacing:.06em;color:#fcd34d;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.25);padding:2px 7px;border-radius:6px;margin-left:8px;vertical-align:middle">BETA</span></div>
-        <h2 style="font-size:clamp(28px,3.6vw,42px);font-weight:900;letter-spacing:-.035em;margin:14px 0 16px;line-height:1.1">Saiba o rank de <span class="grad">todos</span> antes do round começar</h2>
-        <p class="muted" style="font-size:16px;line-height:1.65">Segura TAB e o overlay aparece sobre o jogo: os 10 jogadores da partida com <b style="color:var(--text)">rank, KD, headshot% e winrate</b>. Descubra o smurf do time inimigo, saiba em quem confiar e jogue cada round com a informação que ninguém mais tem.</p>
-        <ul style="list-style:none;margin-top:22px;display:flex;flex-direction:column;gap:13px">
-          <li style="display:flex;gap:11px;font-size:14.5px;color:var(--muted)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Rank, KD, HS% e WR de cada um, ao vivo</li>
-          <li style="display:flex;gap:11px;font-size:14.5px;color:var(--muted)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Aparece no TAB e some — leve, sem poluir a tela</li>
-          <li style="display:flex;gap:11px;font-size:14.5px;color:var(--muted)"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Aba de Stats completa: histórico, agentes e mapas</li>
-        </ul>
-        <div class="ladder">
-          <img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/3/smallicon.png" alt="Ferro" loading="lazy">
-          <img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/6/smallicon.png" alt="Bronze" loading="lazy">
-          <img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/9/smallicon.png" alt="Prata" loading="lazy">
-          <img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/12/smallicon.png" alt="Ouro" loading="lazy">
-          <img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/15/smallicon.png" alt="Platina" loading="lazy">
-          <img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/18/smallicon.png" alt="Diamante" loading="lazy">
-          <img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/21/smallicon.png" alt="Ascendente" loading="lazy">
-          <img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/24/smallicon.png" alt="Imortal" loading="lazy">
-          <img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/27/smallicon.png" alt="Radiante" loading="lazy">
-          <span>do Ferro ao Radiante</span>
-        </div>
-        <div class="tabhint">Segure <span class="kbd" id="tabKey">TAB</span> e veja a partida inteira</div>
-      </div>
-      <div class="ov-stage reveal" id="ovStage">
-      <div class="ov-tag">Segurando TAB…</div>
-      <div class="ov-card">
-        <div class="ov-team">SEU TIME</div>
-        <div class="ov-h"><span></span><span>JOGADOR</span><span>RANK</span><span>KD</span><span>HS</span></div>
-        <div class="ov-row me"><img class="ag" src="https://media.valorant-api.com/agents/add6443a-41bd-e414-f6ad-e58d267f4e95/displayicon.png" alt="" loading="lazy"><span class="nm">Você</span><span class="rk" style="color:#f6c44a"><img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/25/smallicon.png" alt="">Imortal 2</span><span class="kd" style="color:var(--green)">1.34</span><span class="kd">28%</span></div>
-        <div class="ov-row"><img class="ag" src="https://media.valorant-api.com/agents/320b2a48-4d9b-a075-30f1-1f93a9b638fa/displayicon.png" alt="" loading="lazy"><span class="nm">duomate</span><span class="rk" style="color:#67e8f9"><img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/20/smallicon.png" alt="">Diamante 3</span><span class="kd" style="color:var(--green)">1.21</span><span class="kd">24%</span></div>
-        <div class="ov-row"><img class="ag" src="https://media.valorant-api.com/agents/eb93336a-449b-9c1b-0a54-a891f7921d69/displayicon.png" alt="" loading="lazy"><span class="nm">flexpicker</span><span class="rk" style="color:#fcd34d"><img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/13/smallicon.png" alt="">Ouro 2</span><span class="kd" style="color:var(--amber)">0.94</span><span class="kd">17%</span></div>
-        <div class="ov-row"><img class="ag" src="https://media.valorant-api.com/agents/1e58de9c-4950-5125-93e9-a0aee9f98746/displayicon.png" alt="" loading="lazy"><span class="nm">iceage</span><span class="rk" style="color:#67e8f9"><img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/18/smallicon.png" alt="">Diamante 1</span><span class="kd" style="color:var(--green)">1.08</span><span class="kd">21%</span></div>
-        <div class="ov-row"><img class="ag" src="https://media.valorant-api.com/agents/f94c3b30-42be-e959-889c-5aa313dba261/displayicon.png" alt="" loading="lazy"><span class="nm">noscope</span><span class="rk" style="color:#22d3ee"><img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/17/smallicon.png" alt="">Platina 3</span><span class="kd" style="color:var(--amber)">0.99</span><span class="kd">19%</span></div>
-        <div class="ov-team" style="color:var(--red);padding-top:12px">INIMIGOS</div>
-        <div class="ov-row"><img class="ag" src="https://media.valorant-api.com/agents/a3bfb853-43b2-7238-a4f1-ad90e9e46bcc/displayicon.png" alt="" loading="lazy"><span class="nm">smurf_alert</span><span class="rk" style="color:#f0abfc"><img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/27/smallicon.png" alt="">Radiante</span><span class="kd" style="color:#f87171">1.62</span><span class="kd">33%</span></div>
-        <div class="ov-row"><img class="ag" src="https://media.valorant-api.com/agents/569fdd95-4d10-43ab-ca70-79becc718b46/displayicon.png" alt="" loading="lazy"><span class="nm">tarkov</span><span class="rk" style="color:#fcd34d"><img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/14/smallicon.png" alt="">Ouro 3</span><span class="kd" style="color:var(--amber)">0.91</span><span class="kd">15%</span></div>
-        <div class="ov-row"><img class="ag" src="https://media.valorant-api.com/agents/22697a3d-45bf-8dd7-4fec-84a9e28c69d7/displayicon.png" alt="" loading="lazy"><span class="nm">yumi</span><span class="rk" style="color:#67e8f9"><img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/19/smallicon.png" alt="">Diamante 2</span><span class="kd" style="color:var(--green)">1.15</span><span class="kd">23%</span></div>
-        <div class="ov-row"><img class="ag" src="https://media.valorant-api.com/agents/bb2a4828-46eb-8cd1-e765-15848195d751/displayicon.png" alt="" loading="lazy"><span class="nm">bcksht</span><span class="rk" style="color:#22d3ee"><img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/15/smallicon.png" alt="">Platina 1</span><span class="kd" style="color:var(--amber)">0.97</span><span class="kd">18%</span></div>
-        <div class="ov-row"><img class="ag" src="https://media.valorant-api.com/agents/8e253930-4c05-31dd-1b6c-968525494517/displayicon.png" alt="" loading="lazy"><span class="nm">lowelo</span><span class="rk" style="color:#cbd5e1"><img src="https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/10/smallicon.png" alt="">Prata 2</span><span class="kd" style="color:#f87171">0.78</span><span class="kd">12%</span></div>
-      </div><!-- ov-card -->
-      </div><!-- ov-stage -->
-    </div>
-  </div>
-</section>
-
-<!-- FEATURES DETAIL -->
-<section style="padding-top:40px">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="eyebrow">Cada botão tem um motivo</div>
-      <h2 style="margin-top:14px">Um arsenal completo, não um "limpador"</h2>
-      <p>Mais de 40 otimizações reais, organizadas e explicadas — e ferramentas que nenhum concorrente tem.</p>
-    </div>
-    <div class="feats">
-      <div class="feat reveal"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><h4>Otimizar com 1 clique</h4><p>O painel analisa seu hardware e aplica o conjunto ideal e seguro de tweaks — adaptado se você tem SSD, pouca RAM, NVIDIA ou AMD. Sem você precisar entender de nada.</p></div>
-      <div class="feat reveal"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10l-1 9a4 4 0 0 1-8 0z"/></svg></div><h4>Modo Competitivo</h4><p>Um botão que coloca o PC em modo guerra: aplica tudo, desliga o que atrapalha, limpa a RAM e prioriza o jogo. Quando você sai, volta tudo ao normal num clique.</p></div>
-      <div class="feat reveal"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg></div><h4>Editor de gráficos do Valorant</h4><p>Resolução, FPS cap, V-Sync e qualidades direto daqui — com preset competitivo que zera até as configurações ocultas que o menu do jogo nem mostra.</p></div>
-      <div class="feat reveal"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 8h20v8H2zM6 8v8M10 8v8M14 8v8M18 8v8"/></svg></div><h4>Limpeza de RAM automática</h4><p>Libera memória e a standby list em intervalos — sem nunca esvaziar o working set do jogo. Fim das quedas de FPS depois de horas jogando.</p></div>
-      <div class="feat reveal"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/><path d="M10 11v5M14 11v5"/></svg></div><h4>Limpeza de disco</h4><p>Varre temporários, cache e logs e libera espaço — com opção de agendar pra rodar no próximo boot, atingindo até o que o Windows trava enquanto está em uso.</p></div>
-      <div class="feat reveal"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><h4>Auto-Boost ao abrir o jogo</h4><p>O painel detecta o Valorant abrindo — mesmo pelo Riot Client — e dá prioridade alta + limpa a RAM automaticamente. Você nem precisa lembrar.</p></div>
-      <div class="feat reveal"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m9 12 2 2 4-4"/></svg></div><h4>Reaplicar quando o Windows desfaz</h4><p>Updates do Windows revertem tweaks o tempo todo. O painel percebe e te avisa: "o Windows desfez 3 otimizações" — reaplica num clique.</p></div>
-      <div class="feat reveal"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"/><path d="M12 8v4l3 2"/></svg></div><h4>Diagnóstico de Overclock + XMP</h4><p>Lê CPU, GPU e RAM e mostra onde dá pra ganhar. Detecta XMP/EXPO desligado e te ensina a ligar — o maior ganho grátis de FPS que existe.</p></div>
-      <div class="feat reveal"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="6"/><path d="M12 6v4"/></svg></div><h4>Raw Accel — mira de pro</h4><p>Integração com o Raw Accel pra acertar a curva do mouse com perfis prontos e o seu DPI — mira 1:1, sem a aceleração escondida do Windows atrapalhando.</p></div>
-      <div class="feat reveal"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><h4>Comunidade Baliz</h4><p>Veja quem da comunidade está online e em que elo, troque convites de duo e converse — tudo dentro do painel, sem sair pro Discord.</p></div>
-      <div class="feat reveal"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v14H3z"/><path d="M8 21h8M12 17v4"/></svg></div><h4>Sensibilidade & Pro Players</h4><p>Calculadora de cm/360 e conversor entre jogos, mais a sensi real dos profissionais pra você espelhar o setup de quem joga em LAN.</p></div>
-      <div class="feat reveal"><div class="fi"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v12H4z"/><path d="m8 20 4-4 4 4"/></svg></div><h4>Estatísticas no detalhe</h4><p>Seu histórico, desempenho por agente e por mapa — puxado rápido e direto do cliente do jogo. Saiba exatamente onde você ganha e onde sangra pontos.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- COMO FUNCIONA -->
+<!-- HOW IT WORKS -->
 <section id="como">
   <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="eyebrow">Simples assim</div>
-      <h2 style="margin-top:14px">Do download ao FPS em 2 minutos</h2>
+    <div class="head rv">
+      <div class="eyebrow">Como funciona</div>
+      <h2>Do download ao jogo em 2 minutos</h2>
     </div>
     <div class="steps">
-      <div class="step reveal"><h4>Instale e abra</h4><p>Baixa, instala e abre. O painel já roda como administrador e analisa seu PC na hora — CPU, GPU, RAM, disco e Windows.</p></div>
-      <div class="step reveal"><h4>Clique em Otimizar</h4><p>Um botão aplica o pacote ideal pro seu hardware, com ponto de restauração criado antes. Ou ative função por função, do seu jeito.</p></div>
-      <div class="step reveal"><h4>Entre e domine</h4><p>Abra o Valorant pelo próprio painel com o boost ligado. Sinta o frametime liso, a mira responder e o overlay te dar a real da partida.</p></div>
+      <div class="step rv"><h4>Instale e abra</h4><p>O painel roda como administrador e analisa seu PC na hora — CPU, GPU, RAM, disco e versão do Windows.</p></div>
+      <div class="step rv"><h4>Otimize do seu jeito</h4><p>Um clique aplica o pacote ideal pro seu hardware (com backup antes), ou ative função por função e veja o que cada uma faz.</p></div>
+      <div class="step rv"><h4>Entre e leia a partida</h4><p>Abra o Valorant pelo painel com o boost ligado e use o overlay pra saber com quem você está jogando — e contra quem.</p></div>
     </div>
   </div>
 </section>
@@ -509,70 +646,70 @@
 <!-- PRICING -->
 <section id="preco">
   <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="eyebrow">Preço</div>
-      <h2 style="margin-top:14px">Custa menos que uma skin. Rende o ano inteiro.</h2>
-      <p>Uma skin some no próximo episódio. Um PC afiado te carrega ranqueado todo dia. Escolha seu plano:</p>
+    <div class="head rv">
+      <div class="eyebrow">Planos</div>
+      <h2>Um preço justo para uma ferramenta completa</h2>
+      <p>Otimização, overlay e estatísticas no mesmo app. Sem pegadinha, cancele quando quiser.</p>
     </div>
-    <div class="price-wrap" id="comprar">
-      <div class="plan reveal">
+    <div class="prices">
+      <div class="plan rv">
         <h3>Mensal</h3>
         <div class="amt"><small>R$</small> 19,90</div>
         <div class="per">por mês · cancele quando quiser</div>
         <ul>
-          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Todas as otimizações</li>
-          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Overlay de partida ao vivo</li>
-          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Atualizações automáticas</li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg> Todas as otimizações e o diagnóstico</li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg> Overlay de partida ao vivo</li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg> Atualizações automáticas</li>
         </ul>
         <!-- TODO: cole aqui o link de pagamento do Stripe (Payment Link) -->
-        <a href="COLE_O_LINK_STRIPE_MENSAL" class="btn btn-ghost">Assinar mensal</a>
+        <a href="COLE_O_LINK_STRIPE_MENSAL" class="btn btn-line">Assinar mensal</a>
       </div>
-      <div class="plan hot reveal">
+      <div class="plan hot rv">
         <span class="pop">Economize 30%</span>
         <h3>Anual</h3>
-        <div style="font-size:15px;color:var(--dim);text-decoration:line-through;margin-top:12px">R$ 19,90/mês</div>
-        <div class="amt amt-glow" style="margin-top:0"><small>R$</small> 13<small style="font-size:26px">,93</small><small style="font-size:17px;-webkit-text-fill-color:var(--muted);margin-left:4px">/mês</small></div>
-        <div class="per">cobrado <b style="color:var(--text)">R$ 167,16</b> uma vez por ano</div>
+        <div class="strike">R$ 19,90/mês</div>
+        <div class="amt amt-glow" style="margin-top:0"><small>R$</small> 13<small style="font-size:25px">,93</small><small style="font-size:16px;-webkit-text-fill-color:var(--mut);margin-left:4px">/mês</small></div>
+        <div class="per">cobrado <b style="color:var(--ink)">R$ 167,16</b> uma vez por ano</div>
         <ul>
-          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Tudo do mensal com <b style="color:var(--text)">30% de desconto</b></li>
-          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Todas as atualizações do ano incluídas</li>
-          <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg> Suporte prioritário no Discord</li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg> Tudo do mensal com <b>30% de desconto</b></li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg> Todas as atualizações do ano incluídas</li>
+          <li><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M20 6 9 17l-5-5"/></svg> Suporte prioritário no Discord</li>
         </ul>
         <!-- TODO: cole aqui o link de pagamento do Stripe (Payment Link) -->
-        <a href="COLE_O_LINK_STRIPE_ANUAL" class="btn btn-primary magnetic">Garantir 30% OFF
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a href="COLE_O_LINK_STRIPE_ANUAL" class="btn btn-fill">Garantir 30% OFF
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
       </div>
     </div>
-    <p style="text-align:center;color:var(--dim);font-size:13px;margin-top:22px">Pagamento seguro via Stripe · A licença chega no seu e-mail na hora · Funciona em 1 PC por chave</p>
+    <p class="pay">Pagamento seguro via Stripe · O instalador e a licença chegam no seu e-mail · 1 PC por chave · Garantia de 7 dias</p>
   </div>
 </section>
 
 <!-- FAQ -->
 <section id="faq">
   <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="eyebrow">Perguntas frequentes</div>
-      <h2 style="margin-top:14px">Tirando suas dúvidas, na real</h2>
+    <div class="head rv">
+      <div class="eyebrow">Dúvidas</div>
+      <h2>Perguntas frequentes</h2>
     </div>
     <div class="faq">
-      <details class="reveal"><summary>É seguro? Pode quebrar meu PC?<span class="pm"></span></summary><p>Sim, é seguro. Toda mudança é reversível e o painel cria um ponto de restauração do Windows antes de mexer. Se você não gostar, reverte tudo num clique. Nada de tweak agressivo que trava boot ou danifica hardware.</p></details>
-      <details class="reveal"><summary>Vou ser banido por usar?<span class="pm"></span></summary><p>As otimizações de sistema não tocam no jogo — risco zero. Os recursos de partida ao vivo leem o cliente do seu próprio Valorant (a mesma técnica de apps populares de stats), com histórico de risco baixo. Mesmo assim: é uma ferramenta não oficial, use por sua conta e risco.</p></details>
-      <details class="reveal"><summary>Funciona no meu PC?<span class="pm"></span></summary><p>Funciona em qualquer PC com Windows 10 ou 11, com placa NVIDIA, AMD ou Intel. As otimizações se adaptam ao seu hardware — de PCs simples a máquinas top.</p></details>
-      <details class="reveal"><summary>Vai dobrar meu FPS?<span class="pm"></span></summary><p>Sejamos honestos: nenhum software faz milagre em cima do hardware. O que o Baliz faz é tirar o seu PC do freio e deixar o FPS <b style="color:var(--text)">mais alto e, principalmente, mais estável</b> — fim das travadas no momento decisivo. O ganho varia conforme a máquina, e o painel te mostra exatamente o que mudou.</p></details>
-      <details class="reveal"><summary>Precisa de administrador? Meu antivírus pode reclamar?<span class="pm"></span></summary><p>Sim, ele precisa de administrador pra ajustar o Windows — por isso pede a confirmação ao abrir. Como ele mexe em configurações de sistema, alguns antivírus podem alertar por precaução; é seguro liberar. As instruções vêm junto.</p></details>
-      <details class="reveal"><summary>O overlay e as stats funcionam com o jogo fechado?<span class="pm"></span></summary><p>O overlay de partida ao vivo precisa do Valorant aberto (ele lê a partida em andamento). As otimizações de PC funcionam sempre, com ou sem o jogo aberto.</p></details>
-      <details class="reveal"><summary>Como recebo depois de comprar?<span class="pm"></span></summary><p>O pagamento é via Stripe e a chave de licença chega no seu e-mail na hora. É só colar no painel e ativar. Cada chave funciona em 1 PC.</p></details>
+      <details class="rv"><summary>É seguro? Pode quebrar meu PC?<span class="pm"></span></summary><p>Sim. Toda mudança é reversível e o painel cria um ponto de restauração do Windows antes de mexer. Cada ajuste é uma configuração padrão de sistema ou driver — nada de tweak agressivo que trava o boot ou danifica hardware. Não gostou? Reverte tudo num clique.</p></details>
+      <details class="rv"><summary>Vou ser banido por usar?<span class="pm"></span></summary><p>As otimizações de sistema não tocam no jogo — risco zero. Os recursos de partida ao vivo leem o cliente do seu próprio Valorant (a mesma técnica de apps populares de stats), com histórico de risco baixo. Ainda assim, é uma ferramenta <b>não oficial</b>: use por sua conta e risco.</p></details>
+      <details class="rv"><summary>Qual a diferença pro Tracker.gg e parecidos?<span class="pm"></span></summary><p>Trackers focam em estatísticas e overlay. O Baliz faz isso <b>e</b> otimiza o seu PC de verdade (FPS, input lag, rede), tem editor de gráficos do Valorant, diagnóstico de overclock e ajuste de mouse — tudo num app nativo e leve, sem precisar do Overwolf rodando pesado em segundo plano. É um app só, não três.</p></details>
+      <details class="rv"><summary>Vai dobrar meu FPS?<span class="pm"></span></summary><p>Sendo honesto: nenhum software faz milagre sobre o hardware. O Baliz tira o seu PC do freio e deixa o FPS <b>mais alto e, principalmente, mais estável</b> — fim das travadas no momento decisivo. O ganho varia conforme a máquina, e o painel te mostra exatamente o que mudou e quanto.</p></details>
+      <details class="rv"><summary>Precisa de administrador? O antivírus pode reclamar?<span class="pm"></span></summary><p>Sim, ele precisa de administrador para ajustar o Windows — por isso pede confirmação ao abrir. Como mexe em configurações de sistema, alguns antivírus podem alertar por precaução; é seguro liberar, e as instruções vêm junto.</p></details>
+      <details class="rv"><summary>O overlay funciona com o jogo fechado?<span class="pm"></span></summary><p>Não — o overlay de partida ao vivo precisa do Valorant aberto, porque lê a partida em andamento (recurso em Beta). Já as otimizações de PC funcionam sempre, com ou sem o jogo aberto.</p></details>
+      <details class="rv"><summary>Como recebo depois de comprar?<span class="pm"></span></summary><p>O pagamento é via Stripe. Assim que aprovar, você recebe <b>no seu e-mail o instalador e a sua chave de licença</b> — é instalar, colar a chave e ativar. Cada chave funciona em 1 PC por vez; se trocar de máquina, o suporte reseta a vinculação em minutos. E tem <b>garantia de 7 dias</b>: não curtiu, devolvemos o valor (<a href="reembolso.html" style="color:var(--vio,#a78bfa)">política de reembolso</a>).</p></details>
     </div>
   </div>
 </section>
 
-<!-- CTA -->
-<section style="padding-top:20px">
-  <div class="cta reveal">
-    <h2>Pare de perder round por culpa do PC.</h2>
-    <p>Otimização de verdade, overlay que ninguém tem e a segurança de reverter tudo quando quiser.</p>
-    <a href="#comprar" class="btn btn-primary btn-lg magnetic">Quero o Baliz Painel agora
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+<!-- FINAL -->
+<section style="padding-top:22px">
+  <div class="final rv-s">
+    <h2>Deixe o PC no ponto e entre sabendo de tudo.</h2>
+    <p>Desempenho real, overlay que te dá a leitura da partida e a segurança de reverter quando quiser.</p>
+    <a href="#preco" class="btn btn-fill btn-lg" style="position:relative">Começar com o Baliz Painel
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
   </div>
 </section>
 
@@ -580,25 +717,25 @@
 <footer>
   <div class="wrap">
     <div class="foot">
-      <div class="col" style="max-width:280px">
-        <div class="brand" style="margin-bottom:12px"><img class="mark" src="data:image/png;base64,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" alt="Baliz"> Baliz Painel</div>
-        <p class="muted" style="font-size:13.5px;line-height:1.6">O otimizador definitivo de PC para quem leva o Valorant a sério.</p>
+      <div class="col" style="max-width:290px">
+        <div class="brand" style="margin-bottom:14px"><img src="logo.png" alt="Baliz"> Baliz Painel</div>
+        <p class="mut" style="font-size:13px;line-height:1.65">Desempenho e leitura de partida para quem leva o Valorant a sério.</p>
       </div>
       <div class="col">
         <h5>Produto</h5>
-        <a href="#recursos">Recursos</a><a href="#overlay">Overlay</a><a href="#preco">Preço</a><a href="#faq">FAQ</a>
+        <a href="#desempenho">Desempenho</a><a href="#overlay">Overlay</a><a href="#comparativo">Comparativo</a><a href="#preco">Planos</a>
       </div>
       <div class="col">
         <h5>Suporte</h5>
-        <a href="https://discord.com/invite/zZUcQNPasA" target="_blank" rel="noopener">Discord</a><a href="#como">Como instalar</a><a href="reembolso.html">Reembolso</a>
+        <a href="#faq">FAQ</a><a href="https://discord.com/invite/zZUcQNPasA" target="_blank" rel="noopener">Discord</a><a href="#como">Como instalar</a><a href="mailto:balizstoree@gmail.com">E-mail</a>
       </div>
       <div class="col">
         <h5>Legal</h5>
-        <a href="termos.html">Termos de Uso</a><a href="privacidade.html">Privacidade</a><a href="reembolso.html">Política de Reembolso</a>
+        <a href="termos.html">Termos de Uso</a><a href="privacidade.html">Privacidade</a><a href="reembolso.html">Reembolso</a>
       </div>
     </div>
-    <div class="disclaimer">
-      Baliz Painel não é afiliado, associado, autorizado, endossado por, nem oficialmente conectado à Riot Games, Inc. VALORANT e Riot Games são marcas registradas ou marcas comerciais da Riot Games, Inc. Todos os nomes de produtos, logotipos e marcas pertencem aos seus respectivos donos. Esta é uma ferramenta independente de otimização de sistema; o uso de recursos que interagem com o cliente do jogo é por sua conta e risco.
+    <div class="legal">
+      Baliz Painel não é afiliado, associado, autorizado, endossado por, nem oficialmente conectado à Riot Games, Inc. VALORANT e Riot Games são marcas registradas ou marcas comerciais da Riot Games, Inc. Tracker.gg, Overwolf, Blitz e demais nomes citados pertencem aos seus respectivos donos e são usados apenas para fins de comparação. Esta é uma ferramenta independente de otimização de sistema; o uso de recursos que interagem com o cliente do jogo é por sua conta e risco.
       <br><br>© 2026 Baliz Painel. Todos os direitos reservados.
     </div>
   </div>
@@ -609,114 +746,92 @@
   var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
   var lerp=function(a,b,t){return a+(b-a)*t;};
 
-  // ── scroll reveal em CASCATA ──
-  // Cada item ganha um atraso conforme a posição entre os irmãos .reveal, então
-  // um grupo (cards, pilares…) surge UM APÓS O OUTRO, devagar — não tudo junto.
-  // Dispara só quando o item já entrou ~14% na tela (rootMargin), pra dar o tempo.
-  var io=new IntersectionObserver(function(es){
-    es.forEach(function(e){ if(!e.isIntersecting)return;
-      var el=e.target, sibs=[].filter.call(el.parentNode.children,function(c){return c.classList&&c.classList.contains('reveal');});
-      var idx=sibs.indexOf(el);
-      el.style.transitionDelay=(idx*0.16).toFixed(2)+'s'; // cascata: 160ms entre cada irmão
-      el.classList.add('in');
-      io.unobserve(el);
-    });
-  },{threshold:0, rootMargin:'0px 0px -14% 0px'});
-  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+  // ── REVEAL: entrada rápida + easing premium, stagger curto, dispara cedo ──
+  if(reduce){
+    document.querySelectorAll('.rv,.rv-s').forEach(function(el){el.classList.add('in');});
+  } else {
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(!e.isIntersecting)return;
+        var el=e.target;
+        var sibs=[].filter.call(el.parentNode.children,function(c){return c.classList&&(c.classList.contains('rv')||c.classList.contains('rv-s'));});
+        var idx=sibs.indexOf(el);
+        el.style.transitionDelay=(Math.min(idx,8)*0.08).toFixed(2)+'s';
+        el.classList.add('in');
+        io.unobserve(el);
+      });
+    },{threshold:0, rootMargin:'0px 0px -8% 0px'});
+    document.querySelectorAll('.rv,.rv-s').forEach(function(el){io.observe(el);});
+  }
 
-  // ── progresso de scroll (rAF, sem layout a cada evento) ──
-  var prog=document.getElementById('progress'),pTick=false;
-  addEventListener('scroll',function(){ if(pTick)return; pTick=true; requestAnimationFrame(function(){
-    var h=document.documentElement,max=h.scrollHeight-h.clientHeight; prog.style.width=(max>0?scrollY/max*100:0)+'%'; pTick=false;
+  // ── NAV sólida ao rolar ──
+  var nav=document.getElementById('nav');
+  function navScroll(){ nav.classList.toggle('stuck', scrollY>18); }
+  navScroll(); addEventListener('scroll',navScroll,{passive:true});
+
+  // ── barra de progresso ──
+  var scan=document.getElementById('scan'),tick=false;
+  addEventListener('scroll',function(){ if(tick)return; tick=true; requestAnimationFrame(function(){
+    var h=document.documentElement,max=h.scrollHeight-h.clientHeight; scan.style.width=(max>0?scrollY/max*100:0)+'%'; tick=false;
   });},{passive:true});
 
   // ── números que sobem ──
   var cu=new IntersectionObserver(function(es){es.forEach(function(e){
     if(!e.isIntersecting)return; cu.unobserve(e.target);
-    var el=e.target,end=+el.dataset.count,pre=el.dataset.prefix||'',suf=el.dataset.suffix||'',t0=performance.now(),dur=1700;
-    (function tick(t){var k=Math.min((t-t0)/dur,1);el.textContent=pre+Math.round(end*(1-Math.pow(1-k,3)))+suf;if(k<1)requestAnimationFrame(tick);})(t0);
+    var el=e.target,end=+el.dataset.count,pre=el.dataset.prefix||'',suf=el.dataset.suffix||'',t0=performance.now(),dur=1500;
+    (function go(t){var k=Math.min((t-t0)/dur,1);el.textContent=pre+Math.round(end*(1-Math.pow(1-k,3)))+suf;if(k<1)requestAnimationFrame(go);})(t0);
   });},{threshold:.5});
   document.querySelectorAll('[data-count]').forEach(function(el){cu.observe(el);});
 
-  // ── spotlight (só guarda alvo; aplicado no loop) ──
-  var hero=document.querySelector('.hero'),sx=.5,sy=.3,stx=.5,sty=.3,heroR=null;
-  if(hero){
-    hero.addEventListener('pointermove',function(e){heroR=heroR||hero.getBoundingClientRect();stx=(e.clientX-heroR.left)/heroR.width;sty=(e.clientY-heroR.top)/heroR.height;});
-    addEventListener('scroll',function(){heroR=null;},{passive:true});
-    addEventListener('resize',function(){heroR=null;});
+  // ── tilt sutil no device ──
+  var device=document.getElementById('device'),frame=document.getElementById('frame'),
+      tRX=5,tRY=0,cRX=5,cRY=0,dR=null;
+  if(device&&frame&&!reduce){
+    device.addEventListener('pointermove',function(e){dR=dR||device.getBoundingClientRect();
+      var px=(e.clientX-dR.left)/dR.width-.5,py=(e.clientY-dR.top)/dR.height-.5; tRY=px*4; tRX=5-py*4;});
+    device.addEventListener('pointerleave',function(){tRX=5;tRY=0;dR=null;});
+    addEventListener('scroll',function(){dR=null;},{passive:true});
   }
 
-  // ── tilt (alvo via pointer; suavizado no loop) ──
-  var shot=document.getElementById('shot'),txRX=7,txRY=0,cRX=7,cRY=0,shotR=null;
-  if(shot){
-    shot.addEventListener('pointermove',function(e){shotR=shotR||shot.getBoundingClientRect();var px=(e.clientX-shotR.left)/shotR.width-.5,py=(e.clientY-shotR.top)/shotR.height-.5;txRY=px*7;txRX=7-py*7;});
-    shot.addEventListener('pointerleave',function(){txRX=7;txRY=0;shotR=null;});
-    addEventListener('scroll',function(){shotR=null;},{passive:true});
-  }
-
-  // ── botões magnéticos (alvo via pointer; suavizado no loop) ──
-  var mags=[].map.call(document.querySelectorAll('.btn.magnetic'),function(b){var o={el:b,tx:0,ty:0,cx:0,cy:0,r:null};
-    b.addEventListener('pointermove',function(e){o.r=o.r||b.getBoundingClientRect();o.tx=((e.clientX-o.r.left)/o.r.width-.5)*9;o.ty=((e.clientY-o.r.top)/o.r.height-.5)*7;});
-    b.addEventListener('pointerleave',function(){o.tx=0;o.ty=0;o.r=null;});
-    return o;});
-
-  // ── monitor de FPS: waveform contínua + número interpolado ──
-  var bars=document.getElementById('ftBars'),fpsNum=document.getElementById('fpsNum'),
-      st=document.getElementById('monState'),foot=document.getElementById('monFoot'),
-      bi=[],good=false,amp=.42,ampT=.42,base=.5,baseT=.5,fpsCur=112,fpsT=112,phase=[];
+  // ── monitor FPS ──
+  var bars=document.getElementById('bars'),fpsN=document.getElementById('fpsN'),
+      mState=document.getElementById('mState'),mFoot=document.getElementById('mFoot'),
+      bi=[],good=false,amp=.42,ampT=.42,base=.5,baseT=.5,fc=112,ft=112,ph=[];
   if(bars){
-    for(var i=0;i<26;i++){var b=document.createElement('i');bars.appendChild(b);bi.push(b);phase.push(Math.random()*6.28);}
+    for(var i=0;i<28;i++){var bb=document.createElement('i');bars.appendChild(bb);bi.push(bb);ph.push(Math.random()*6.28);}
     function flip(){
       good=!good;
       ampT=good?.10:.42; baseT=good?.34:.5;
-      st.textContent=good?'COM BALIZ':'SEM BALIZ'; st.className='state '+(good?'good':'bad');
+      mState.textContent=good?'COM BALIZ':'SEM BALIZ'; mState.className='state '+(good?'good':'bad');
       bars.classList.toggle('bad',!good);
-      foot.textContent=good?'frametime estável · 4.1 ms':'frametime instável · picos de 22 ms';
-      fpsNum.style.color=good?'#6ee7b7':'#fda4af';
+      mFoot.textContent=good?'frametime 4.1 ms · 1% low 182 FPS':'frametime instável · picos de 22 ms';
+      fpsN.style.color=good?'#6ee7b7':'#fda4af';
     }
-    flip(); // entra em "SEM BALIZ"
-    if(!reduce) setInterval(flip,5400);
-    else { good=false; flip(); /* fica COM BALIZ, estático */ }
-    // alvo de FPS muda devagar (instável no bad, fixo no good) — display interpola
-    setInterval(function(){ fpsT = good ? 239+Math.random()*4 : 96+Math.random()*56; }, good?700:260);
+    flip();
+    if(!reduce) setInterval(flip,5200);
+    else { good=false; flip(); }
+    setInterval(function(){ ft = good ? 239+Math.random()*4 : 96+Math.random()*56; }, 500);
   }
 
-  // ── LOOP ÚNICO (tudo time-based, GPU) ──
-  function frame(t){
-    // spotlight (follow lento e macio)
-    if(hero){sx=lerp(sx,stx,.06);sy=lerp(sy,sty,.06);hero.style.setProperty('--mx',(sx*100)+'%');hero.style.setProperty('--my',(sy*100)+'%');}
-    // tilt (bem suave)
-    if(shot){cRX=lerp(cRX,txRX,.05);cRY=lerp(cRY,txRY,.05);shot.style.setProperty('--rx',cRX.toFixed(2)+'deg');shot.style.setProperty('--ry',cRY.toFixed(2)+'deg');}
-    // magnético
-    for(var m=0;m<mags.length;m++){var o=mags[m];o.cx=lerp(o.cx,o.tx,.1);o.cy=lerp(o.cy,o.ty,.1);
-      o.el.style.transform=(Math.abs(o.cx)<.05&&Math.abs(o.cy)<.05)?'':'translate('+o.cx.toFixed(2)+'px,'+o.cy.toFixed(2)+'px)';}
-    // waveform
+  // ── loop ──
+  function loop(t){
+    if(frame){cRX=lerp(cRX,tRX,.06);cRY=lerp(cRY,tRY,.06);
+      frame.style.transform='rotateX('+cRX.toFixed(2)+'deg) rotateY('+cRY.toFixed(2)+'deg)';}
     if(bi.length){
-      amp=lerp(amp,ampT,.028); base=lerp(base,baseT,.028); fpsCur=lerp(fpsCur,fpsT,.07);
-      fpsNum.textContent=Math.round(fpsCur);
-      var ts=t/680;
+      amp=lerp(amp,ampT,.02); base=lerp(base,baseT,.02); fc=lerp(fc,ft,.06);
+      fpsN.textContent=Math.round(fc);
+      var ts=t/700;
       for(var i=0;i<bi.length;i++){
-        var n=Math.sin(ts+phase[i])*.5+Math.sin(ts*1.7+phase[i]*1.3)*.5; // ruído orgânico suave
+        var n=Math.sin(ts+ph[i])*.5+Math.sin(ts*1.7+ph[i]*1.3)*.5;
         var s=base+n*amp; if(s<.06)s=.06; if(s>1)s=1;
         bi[i].style.transform='scaleY('+s.toFixed(3)+')';
       }
     }
-    requestAnimationFrame(frame);
+    requestAnimationFrame(loop);
   }
-  if(reduce){ // estado final estático, sem loop
-    if(hero){hero.style.setProperty('--mx','50%');hero.style.setProperty('--my','30%');}
-    if(bi.length){for(var i=0;i<bi.length;i++)bi[i].style.transform='scaleY(.34)';fpsNum.textContent='240';}
-  } else requestAnimationFrame(frame);
-
-  // ── overlay: "segura TAB" ──
-  var stage=document.getElementById('ovStage'),tabKey=document.getElementById('tabKey'),hov=false;
-  function hold(on){if(!stage)return;stage.classList.toggle('held',on);if(tabKey)tabKey.classList.toggle('down',on);}
-  if(stage){
-    if(reduce)hold(true);
-    else{var on=false;setInterval(function(){if(hov)return;on=!on;hold(on);},2600);
-      stage.addEventListener('pointerenter',function(){hov=true;hold(true);});
-      stage.addEventListener('pointerleave',function(){hov=false;});}
-  }
+  if(reduce){
+    if(bi.length){for(var i=0;i<bi.length;i++)bi[i].style.transform='scaleY(.34)';fpsN.textContent='240';}
+    if(frame)frame.style.transform='none';
+  } else requestAnimationFrame(loop);
 })();
 </script>
 </body>
